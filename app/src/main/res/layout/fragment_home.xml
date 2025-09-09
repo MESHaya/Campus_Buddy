@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Home">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,11 +12,94 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
+        <!-- Logo above the bar -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/logo1"
+            android:contentDescription="Logo"
+            android:layout_gravity="center"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Heading -->
         <TextView
-            android:text="Home / Dashboard"
-            android:textSize="22sp"
+            android:id="@+id/tvHeading"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Choose an option:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#113F7D"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Option Buttons -->
+        <Button
+            android:id="@+id/btnOption1"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Calendar"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:background="@drawable/red_border_button"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnOption2"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Tasks"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:background="@drawable/red_border_button"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnOption3"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Attendance"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:background="@drawable/red_border_button"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnOption4"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Map"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:background="@drawable/red_border_button"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnOption5"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Emergency"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:background="@drawable/red_border_button"
+            app:backgroundTint="@null" />
+
+        <Button
+            android:id="@+id/btnOption6"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Settings"
+            android:textColor="#000000"
+            android:padding="12dp"
+            android:background="@drawable/red_border_button"
+            app:backgroundTint="@null" />
     </LinearLayout>
 
 
