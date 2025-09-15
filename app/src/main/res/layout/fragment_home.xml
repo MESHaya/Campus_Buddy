@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
-        <!-- Logo above the bar -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="150dp"
@@ -23,7 +22,6 @@
             android:layout_marginTop="1dp"
             android:layout_marginBottom="12dp" />
 
-        <!-- Heading -->
         <TextView
             android:id="@+id/tvHeading"
             android:layout_width="wrap_content"
