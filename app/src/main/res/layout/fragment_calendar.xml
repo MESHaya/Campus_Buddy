@@ -60,7 +60,7 @@
             android:showWeekNumber="false" />
     </LinearLayout>
 
-    <!-- Example overlay (floating button for adding events) -->
+    <!-- floating button for adding events -->
     <ImageButton
         android:id="@+id/btnAddEvent"
         android:layout_width="56dp"

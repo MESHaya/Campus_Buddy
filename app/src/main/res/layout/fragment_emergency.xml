@@ -6,14 +6,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".EmergencyFragment">
 
-    <!-- Main content in vertical order -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Logo above the bar -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="150dp"
@@ -50,7 +48,6 @@
                 android:textColor="#113F7D" />
         </LinearLayout>
 
-        <!-- Small description -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="wrap_content"
@@ -60,7 +57,7 @@
             android:textColor="#555555"
             android:layout_marginTop="8dp" />
 
-        <!-- Divider line -->
+        <!-- line -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -68,7 +65,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Emergency Services List -->
+        <!-- Campus Emergency Services List -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -200,7 +197,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Optional floating emergency button (overlay example) -->
+    <!-- floating emergency button (overlay example) -->
     <ImageButton
         android:id="@+id/btnEmergency"
         android:layout_width="56dp"
