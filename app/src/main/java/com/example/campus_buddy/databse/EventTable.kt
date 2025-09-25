@@ -1,4 +1,4 @@
-package com.example.campusbuddy.database
+package com.example.campus_buddy.databse
 
 object EventTable {
     const val TABLE_NAME = "Event"

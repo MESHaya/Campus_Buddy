@@ -1,4 +1,4 @@
-package com.example.campusbuddy.database
+package com.example.campus_buddy.databse
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

@@ -1,4 +1,4 @@
-package com.example.campusbuddy.database
+package com.example.campus_buddy.databse
 
 object UserTable {
     const val TABLE_NAME = "User"
