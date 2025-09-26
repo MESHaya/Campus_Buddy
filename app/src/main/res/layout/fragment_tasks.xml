@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:text="Due"
                 android:checked="true"
-                android:textColor="#000000"/>
+                android:textColor="#000000" />
 
             <RadioButton
                 android:id="@+id/radioDoneTasks"
@@ -81,8 +81,34 @@
                 android:layout_height="wrap_content"
                 android:text="Done"
                 android:layout_marginStart="24dp"
-                android:textColor="#000000"/>
+                android:textColor="#000000" />
         </RadioGroup>
+
+        <!-- Task Input Fields -->
+        <EditText
+            android:id="@+id/etTaskTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Task Title"
+            android:padding="12dp"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/etTaskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Task Description"
+            android:padding="12dp"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btnSaveTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFF"
+            app:backgroundTint="#113F7D"
+            android:text="Save Task"
+            android:layout_marginTop="12dp" />
 
         <!-- RecyclerView for displaying tasks -->
         <!-- display tasks lists binding with api -->
@@ -97,17 +123,5 @@
             android:layout_marginTop="12dp"/>
 
     </LinearLayout>
-
-    <!-- floating button for adding tasks -->
-    <ImageButton
-        android:id="@+id/btnAddTasks"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:src="@android:drawable/ic_input_add"
-        android:background="@android:color/holo_blue_dark"
-        android:contentDescription="Add event"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        app:tint="#113F7D" />
 
 </FrameLayout>
