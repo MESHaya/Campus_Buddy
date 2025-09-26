@@ -43,7 +43,7 @@
             android:textColor="#113F7D" />
     </LinearLayout>
 
-    <!-- Task Input Fields -->
+    <!-- Task/ to do list Input Fields -->
     <EditText
         android:id="@+id/etTaskTitle"
         android:layout_width="match_parent"
