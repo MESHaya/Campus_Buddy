@@ -28,6 +28,10 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         onCreate(db)
     }
 
+    fun insertTask(title: String, description: String) {
+
+    }
+
     companion object {
         const val DATABASE_NAME = "campusbuddy.db"
         const val DATABASE_VERSION = 1

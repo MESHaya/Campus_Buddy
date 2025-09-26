@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.campus_buddy.databse.DatabaseHelper
 
 class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

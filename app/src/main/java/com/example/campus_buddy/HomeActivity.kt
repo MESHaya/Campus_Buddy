@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import com.example.campus_buddy.databse.DatabaseHelper
 
 class HomeActivity : AppCompatActivity() {
 
