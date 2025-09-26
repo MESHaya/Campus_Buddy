@@ -20,7 +20,7 @@
             android:contentDescription="Logo"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp" />
-
+        <!-- Panashe storing session of lightmode and darkmode for specific user -->
         <!-- Top bar with back button and title -->
         <LinearLayout
             android:layout_width="match_parent"

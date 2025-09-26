@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,8 +47,66 @@
                 android:layout_marginStart="8dp"
                 android:textColor="#113F7D" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select which tasks you want to display:"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:layout_marginTop="8dp" />
+
+        <!-- Radio buttons for filtering tasks -->
+        <RadioGroup
+            android:id="@+id/radioGroupTasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <RadioButton
+                android:id="@+id/radioDueTasks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Due"
+                android:checked="true"
+                android:textColor="#000000"/>
+
+            <RadioButton
+                android:id="@+id/radioDoneTasks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Done"
+                android:layout_marginStart="24dp"
+                android:textColor="#000000"/>
+        </RadioGroup>
+
+        <!-- RecyclerView for displaying tasks -->
+        <!-- display tasks lists binding with api -->
+        <!-- RecyclerView (recyclerTasks) → bound to Outlook API GET /me/todo/lists/{listId}/tasks to show tasks. -->
+        <!-- RadioGroup (radioGroupTasks) → filters tasks (due vs. done) by checking their status property from API. -->
+        <!-- FloatingActionButton (btnAddTasks) → opens a dialog where user types a task → sends POST /me/todo/lists/{listId}/tasks to Outlook API → refresh RecyclerView immediately. -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerTasks"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp"/>
+
     </LinearLayout>
 
-    <!-- display tasks lists binding with api -->
+    <!-- floating button for adding tasks -->
+    <ImageButton
+        android:id="@+id/btnAddTasks"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@android:drawable/ic_input_add"
+        android:background="@android:color/holo_blue_dark"
+        android:contentDescription="Add event"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        app:tint="#113F7D" />
 
 </FrameLayout>

@@ -65,11 +65,11 @@
         android:id="@+id/btnAddEvent"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@android:drawable/ic_input_add"
-        android:background="@android:color/holo_blue_dark"
-        android:contentDescription="Add event"
         android:layout_gravity="bottom|end"
         android:layout_margin="24dp"
+        android:background="@android:color/holo_blue_dark"
+        android:contentDescription="Add event"
+        android:src="@android:drawable/ic_input_add"
         app:tint="#113F7D" />
 
 

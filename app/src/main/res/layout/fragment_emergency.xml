@@ -6,7 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".EmergencyFragment">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- floating emergency button (overlay example) -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -16,54 +17,54 @@
             android:id="@+id/logo"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/logo1"
-            android:contentDescription="Logo"
             android:layout_gravity="center"
             android:layout_marginTop="1dp"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:contentDescription="Logo"
+            android:src="@drawable/logo1" />
 
         <!-- Top bar with back button and title -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btnBack"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_revert"
-                android:contentDescription="Go back" />
+                android:contentDescription="Go back"
+                android:src="@android:drawable/ic_menu_revert" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Emergency:"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:layout_marginStart="8dp"
-                android:textColor="#113F7D" />
+                android:text="Emergency:"
+                android:textColor="#113F7D"
+                android:textSize="20sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Directly call these numbers if you have an emergency:"
-            android:textSize="16sp"
             android:textColor="#555555"
-            android:layout_marginTop="8dp" />
+            android:textSize="16sp" />
 
         <!-- line -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#FD3131"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:background="#FD3131" />
 
         <!-- Campus Emergency Services List -->
         <LinearLayout
@@ -75,8 +76,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="8dp">
 
                 <TextView
@@ -84,30 +85,32 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Ambulance"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
                 <ImageView
+                    android:id="@+id/callAmbulance"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_call"
+                    android:layout_marginEnd="8dp"
+                    android:background="@android:color/holo_red_dark"
                     android:contentDescription="Call Ambulance"
-                    android:layout_marginEnd="8dp" />
+                    android:src="@android:drawable/ic_menu_call" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="10177"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <!-- Police -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="8dp">
 
                 <TextView
@@ -115,30 +118,32 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Police"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
                 <ImageView
+                    android:id="@+id/callPolice"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_call"
+                    android:layout_marginEnd="8dp"
+                    android:background="@android:color/holo_red_dark"
                     android:contentDescription="Call Police"
-                    android:layout_marginEnd="8dp" />
+                    android:src="@android:drawable/ic_menu_call" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="10111"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <!-- Traffic -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="8dp">
 
                 <TextView
@@ -146,58 +151,95 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Traffic"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
                 <ImageView
+                    android:id="@+id/callTraffic"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_call"
+                    android:layout_marginEnd="8dp"
+                    android:background="@android:color/holo_red_dark"
                     android:contentDescription="Call Traffic"
-                    android:layout_marginEnd="8dp" />
+                    android:src="@android:drawable/ic_menu_call" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0800 123 456"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:text="0861 400 800"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <!-- Campus Security -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="8dp">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Campus Security"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:text="Campus Protection"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
                 <ImageView
+                    android:id="@+id/callCampus"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_call"
+                    android:layout_marginEnd="8dp"
+                    android:background="@android:color/holo_red_dark"
                     android:contentDescription="Call Campus Security"
-                    android:layout_marginEnd="8dp" />
+                    android:src="@android:drawable/ic_menu_call" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="021 555 1234"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:text="011 950 4099"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
+
+            <!-- Test caller -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Zoe"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/callZoe"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@android:color/holo_red_dark"
+                    android:contentDescription="Call Ambulance"
+                    android:src="@android:drawable/ic_menu_call" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0832226432"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 
-    <!-- floating emergency button (overlay example) -->
     <ImageButton
         android:id="@+id/btnEmergency"
         android:layout_width="56dp"
