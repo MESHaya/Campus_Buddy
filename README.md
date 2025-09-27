@@ -12,12 +12,18 @@
 
 ## 🚀 Features for Part 2
 
-- 🧾 **Register and Login**
-- 📆 **Change settings in app**
+- 🔐 **Register and Login**
+- ⚙️ **Change settings in app**
+  In the Settings page:
+    •	Users can select a language option from the dropdown to choose English, Zulu, or Afrikaans.
+    •	Users can select to receive notifications by using a toggle button. 
+    •	Users can select their desired theme from dark mode or light mode by using a toggle button.
+  In the Tasks page: 
+    •	Users can select the option to display tasks that are due, done, or overdue through radio buttons.
 - 📂 **REST API** 
-- 👤 **User Profile** support (with future login/registration capability).
+- 👤 **User Profile** support (with login/registration capability).
 - 🔄 **Live Data with Flow** – Real-time updates using Kotlin coroutines and Flow.
-- 📱 **Bottom Navigation** – Seamless navigation between Home, Budget, Expenses, Profile, and Settings.
+- 📱 **Bottom Navigation** – Seamless navigation between Home, Calendar, To-Do, Emergency, and Settings.
 
 ---
 
