@@ -3,6 +3,9 @@ package com.example.campus_buddy.databse
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
+import android.content.ContentValues
+
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -28,15 +31,57 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         onCreate(db)
     }
 
+    fun getAllUsersDebug() {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${UserTable.TABLE_NAME}", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_ID))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_NAME))
+                val surname = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_SURNAME))
+                val username = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_USERNAME))
+                val email = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_EMAIL))
+                val studentNum = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_STUDENT_NUM))
+                val password = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_PASSWORD))
+
+                android.util.Log.d("DB_DEBUG", "User: id=$id, name=$name,surname=$surname username=$username, email=$email, studentNum=$studentNum")
+            } while (cursor.moveToNext())
+        } else {
+            android.util.Log.d("DB_DEBUG", "No users found")
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+
     fun insertTask(title: String, description: String) {
 
     }
-    fun insertUser(name:String,surname:String,username:String,email: String,studentID:String,password:String){
+    fun insertUser(name: String, surname: String, username: String, email: String, studentID: String, password: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(UserTable.COL_ID, System.currentTimeMillis().toString()) // unique ID
+            put(UserTable.COL_NAME, "$name $surname") // combine if you want
+            put(UserTable.COL_USERNAME, username)
+            put(UserTable.COL_EMAIL, email)
+            put(UserTable.COL_STUDENT_NUM, studentID)
+            put(UserTable.COL_PASSWORD, password)
+        }
+        val result = db.insert(UserTable.TABLE_NAME, null, values)
+        db.close()
 
+        if (result == -1L) {
+            Log.e("DB_ERROR", "Failed to insert user")
+        } else {
+            Log.d("DB_DEBUG", "User inserted with rowid=$result")
+        }
     }
+
 
     companion object {
         const val DATABASE_NAME = "campusbuddy.db"
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 2
     }
 }

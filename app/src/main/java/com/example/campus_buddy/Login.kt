@@ -44,12 +44,12 @@ class Login : AppCompatActivity() {
             // Check if user exists
             if (checkUser(username, hashedPassword)) {
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, Home::class.java)
-                // Optional: pass username to HomePage
-                intent.putExtra("USERNAME", username)
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("USERNAME", username) // optional
                 startActivity(intent)
-                finish() // Optional: close Login activity so user can't go back with back button
-            } else {
+                finish() // prevents going back to login
+            }
+            else {
                 Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
             }
         }
@@ -58,7 +58,7 @@ class Login : AppCompatActivity() {
     // Function to check if username and password exist in DB
     private fun checkUser(username: String, password: String): Boolean {
         val db = dbHelper.readableDatabase
-        val query = "SELECT * FROM UserTable WHERE username = ? AND password = ?"
+        val query = "SELECT * FROM User WHERE username = ? AND password = ?"
         val cursor = db.rawQuery(query, arrayOf(username, password))
         val exists = cursor.count > 0
         cursor.close()

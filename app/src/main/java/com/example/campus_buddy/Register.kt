@@ -71,17 +71,20 @@ class Register : AppCompatActivity() {
             dbHelper.insertUser(
                 nameText,
                 surnameText,
+                usernameText,
                 emailText,
                 studentIdText,
-                usernameText,
                 hashedPassword
             )
+            dbHelper.getAllUsersDebug()
+
             Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
             clearFields()
             finish() // optional
 
         }
     }
+
 
     // Simple SHA-256 hashing for password
     private fun hashPassword(password: String): String {
