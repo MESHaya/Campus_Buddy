@@ -6,21 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.campus_buddy.databse.DatabaseHelper
 
+import com.example.campusbuddy.data.Task
+
 class TasksFragment : Fragment() {
 
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var etTaskTitle: EditText
     private lateinit var etTaskDescription: EditText
+    private lateinit var tvTaskDate: TextView
     private lateinit var btnSaveTask: Button
     private lateinit var recyclerTasks: RecyclerView
     private lateinit var adapter: TaskAdapter
-    private val taskList = mutableListOf<String>()
+    private val taskList = mutableListOf<Task>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,33 +36,57 @@ class TasksFragment : Fragment() {
 
         etTaskTitle = view.findViewById(R.id.etTaskTitle)
         etTaskDescription = view.findViewById(R.id.etTaskDescription)
+        tvTaskDate = view.findViewById(R.id.tvTaskDate)
         btnSaveTask = view.findViewById(R.id.btnSaveTask)
         recyclerTasks = view.findViewById(R.id.recyclerTasks)
 
-        // Setup RecyclerView
-        adapter = TaskAdapter(taskList)
+        // Setup RecyclerView with Task list
+        adapter = TaskAdapter(taskList) { updatedTask ->
+            dbHelper.updateTaskStatus(updatedTask.id, updatedTask.status)
+        }
         recyclerTasks.layoutManager = LinearLayoutManager(requireContext())
         recyclerTasks.adapter = adapter
+
+        taskList.add(Task("1", "Sample Task", "This is a test", "High", "2025-10-01", "Due", "2025-09-30"))
+        adapter.notifyDataSetChanged()
+
+
+
+        // Load tasks from DB on start
+        loadTasksFromDatabase()
 
         btnSaveTask.setOnClickListener {
             val title = etTaskTitle.text.toString()
             val description = etTaskDescription.text.toString()
+            val dueDate = tvTaskDate.text.toString()
 
             if (title.isNotEmpty()) {
                 // Save to DB
-                dbHelper.insertTask(title, description)
+                val newTaskId = dbHelper.insertTask(title, description, dueDate, "Due")
 
-                // Update RecyclerView
-                taskList.add("$title - $description")
+                // Create task object and add to list
+                val task = Task(newTaskId.toString(), title, description, dueDate, "Due")
+                taskList.add(task)
                 adapter.notifyItemInserted(taskList.size - 1)
 
+                // Clear fields
                 etTaskTitle.text.clear()
                 etTaskDescription.text.clear()
+                tvTaskDate.text = ""
             } else {
                 Toast.makeText(requireContext(), "Please enter a task title", Toast.LENGTH_SHORT).show()
             }
         }
 
         return view
+    }
+
+
+
+    private fun loadTasksFromDatabase() {
+        val tasksFromDb = dbHelper.getAllTasks()
+        taskList.clear()
+        taskList.addAll(tasksFromDb)
+        adapter.notifyDataSetChanged()
     }
 }

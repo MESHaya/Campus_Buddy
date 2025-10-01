@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.content.ContentValues
+import com.example.campusbuddy.data.Task
 
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -56,7 +57,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
 
-    fun insertTask(title: String, description: String) {
+    fun insertTask(title: String, description: String, dueDate: String, s: String) {
 
     }
     fun insertUser(name: String, surname: String, username: String, email: String, studentID: String, password: String) {
@@ -78,6 +79,38 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             Log.d("DB_DEBUG", "User inserted with rowid=$result")
         }
     }
+
+    fun updateTaskStatus(id: Any, status: Any) {
+
+    }
+
+    fun getAllTasks(): List<Task> {
+        val tasks = mutableListOf<Task>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${TaskTable.TABLE_NAME}", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_ID))
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_TITLE))
+                val description = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DESCRIPTION))
+                val dueAt = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DUE_AT))
+                val priority = cursor.getInt(cursor.getColumnIndexOrThrow(TaskTable.COL_PRIORITY))
+                val status = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_STATUS))
+                val createdAt = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_CREATED_AT))
+
+                // Create Task object
+                val task = Task(id, title, description,
+                    priority.toString(), dueAt, status, createdAt)
+                tasks.add(task)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return tasks
+    }
+
 
 
     companion object {

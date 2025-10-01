@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".TasksFragment">
 
-    <!--added selection-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Logo -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="150dp"
@@ -23,7 +23,7 @@
             android:layout_marginTop="1dp"
             android:layout_marginBottom="12dp" />
 
-        <!-- Top bar with back button and title -->
+        <!-- Top bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,8 +32,8 @@
 
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_revert"
                 android:contentDescription="Go back" />
@@ -42,13 +42,14 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tasks:"
+                android:text="New Tasks:"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_marginStart="8dp"
                 android:textColor="#113F7D" />
         </LinearLayout>
 
+        <!-- Description
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="wrap_content"
@@ -57,8 +58,9 @@
             android:textSize="16sp"
             android:textColor="#555555"
             android:layout_marginTop="8dp" />
+             -->
 
-        <!-- Radio buttons for filtering tasks -->
+        <!-- Radio buttons
         <RadioGroup
             android:id="@+id/radioGroupTasks"
             android:layout_width="match_parent"
@@ -82,16 +84,25 @@
                 android:text="Done"
                 android:layout_marginStart="24dp"
                 android:textColor="#000000" />
+
+            <RadioButton
+                android:id="@+id/radioOverDueTasks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OverDue"
+                android:layout_marginStart="24dp"
+                android:textColor="#000000" />
         </RadioGroup>
 
-        <!-- Task Input Fields -->
+         Task input -->
         <EditText
             android:id="@+id/etTaskTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Task Title"
             android:padding="12dp"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:background="@android:drawable/edit_text" />
 
         <EditText
             android:id="@+id/etTaskDescription"
@@ -99,29 +110,49 @@
             android:layout_height="wrap_content"
             android:hint="Task Description"
             android:padding="12dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:background="@android:drawable/edit_text" />
 
+        <!-- Date picker -->
+        <TextView
+            android:id="@+id/tvTaskDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#113F7D"
+            android:layout_marginTop="12dp" />
+
+   <TextView
+       android:id="@+id/tvTaskDate"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="Tap to select a date"
+       android:padding="12dp"
+       android:background="@android:drawable/edit_text"
+       android:textColor="#555"
+       android:textSize="14sp"
+       android:drawableEnd="@android:drawable/ic_menu_today"
+       android:focusable="true"
+       android:clickable="true"
+       android:layout_marginBottom="8dp" />
+
+   <!-- Save button -->
         <Button
             android:id="@+id/btnSaveTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#FFFF"
+            android:textColor="#FFF"
             app:backgroundTint="#113F7D"
-            android:text="Save Task"
+            android:text="@string/save_task"
             android:layout_marginTop="12dp" />
 
-        <!-- RecyclerView for displaying tasks -->
-        <!-- display tasks lists binding with api -->
-        <!-- RecyclerView (recyclerTasks) → bound to Outlook API GET /me/todo/lists/{listId}/tasks to show tasks. -->
-        <!-- RadioGroup (radioGroupTasks) → filters tasks (due vs. done) by checking their status property from API. -->
-        <!-- FloatingActionButton (btnAddTasks) → opens a dialog where user types a task → sends POST /me/todo/lists/{listId}/tasks to Outlook API → refresh RecyclerView immediately. -->
+        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerTasks"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:layout_marginTop="12dp"/>
 
     </LinearLayout>
-
 </FrameLayout>
