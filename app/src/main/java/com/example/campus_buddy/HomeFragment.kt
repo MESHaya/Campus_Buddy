@@ -20,7 +20,7 @@ class HomeFragment : Fragment() {
         val calendarButton: Button = view.findViewById(R.id.btnOption1)
         calendarButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CalendarFragment())
+                .replace(R.id.fragment_container, CalendarFragment<Any>())
                 .addToBackStack(null)
                 .commit()
         }
