@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.campus_buddy.databse.DatabaseHelper
-
 import com.example.campusbuddy.data.Task
 
 class TasksFragment : Fragment() {

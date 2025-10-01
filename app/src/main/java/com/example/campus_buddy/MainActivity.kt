@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_todo -> TasksFragment()
                 R.id.nav_maps -> MapFragment()
                 R.id.nav_attendance -> AttendanceFragment()
-                R.id.nav_calendar -> CalendarFragment()
+                R.id.nav_calendar -> CalendarFragment<Any>()
                 else -> HomeFragment()
             }
             supportFragmentManager.beginTransaction()

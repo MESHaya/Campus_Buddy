@@ -56,10 +56,54 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
     }
 
-
-    fun insertTask(title: String, description: String, dueDate: String, s: String) {
-
+    fun insertTask(title: String, description: String, dueAt: String, status: String = "todo"): Long {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(TaskTable.COL_ID, System.currentTimeMillis().toString())
+            put(TaskTable.COL_TITLE, title)
+            put(TaskTable.COL_DESCRIPTION, description)
+            put(TaskTable.COL_DUE_AT, dueAt)
+            put(TaskTable.COL_STATUS, status)
+        }
+        val result = db.insert(TaskTable.TABLE_NAME, null, values)
+        db.close()
+        return result
     }
+    fun getTasksByDate(date: String): List<Task> {
+        val tasks = mutableListOf<Task>()
+        val db = readableDatabase
+        val cursor = db.query(
+            TaskTable.TABLE_NAME,
+            null,
+            "${TaskTable.COL_DUE_AT}=?",
+            arrayOf(date),
+            null,
+            null,
+            null
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                tasks.add(
+                    Task(
+                        id = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_ID)),
+                        title = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_TITLE)),
+                        description = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DESCRIPTION)),
+                        dueAt = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DUE_AT)),
+                        status = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_STATUS))
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return tasks
+    }
+
+    // fun insertTask(title: String, description: String, dueDate: String, s: String) {
+
+   // }
     fun insertUser(name: String, surname: String, username: String, email: String, studentID: String, password: String) {
         val db = writableDatabase
         val values = ContentValues().apply {
