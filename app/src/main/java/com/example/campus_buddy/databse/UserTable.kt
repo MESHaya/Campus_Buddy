@@ -12,6 +12,8 @@ object UserTable {
     const val COL_CREATED_AT = "createdAt"
 
     const val SQL_CREATE = """
+        
+        
         CREATE TABLE $TABLE_NAME (
             $COL_ID TEXT PRIMARY KEY,
             $COL_NAME TEXT NOT NULL,

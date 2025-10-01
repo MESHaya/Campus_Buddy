@@ -160,4 +160,5 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val DATABASE_NAME = "campusbuddy.db"
         const val DATABASE_VERSION = 2
     }
+
 }

@@ -1,4 +1,4 @@
-package com.example.campus_buddy
+package com.example.campus_buddy  // ✅ Choose one package name to use
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.campus_buddy.databse.DatabaseHelper
 
 class HomeFragment : Fragment() {
 
@@ -17,7 +16,16 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        // Example: Handle Settings button
+        // Calendar Button
+        val calendarButton: Button = view.findViewById(R.id.btnOption1)
+        calendarButton.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, CalendarFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // Settings Button
         val settingsButton: Button = view.findViewById(R.id.btnOption6)
         settingsButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
