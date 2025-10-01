@@ -7,7 +7,6 @@ import android.util.Log
 import android.content.ContentValues
 import com.example.campusbuddy.data.Task
 
-
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
