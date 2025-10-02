@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -62,5 +62,28 @@ dependencies {
     // Logging
     implementation("com.jakewharton.timber:timber:5.0.1")
 
+    // ------------------------API SECTION --------------------------
+
+        implementation("androidx.core:core-ktx:1.12.0")
+        implementation("androidx.appcompat:appcompat:1.6.1")
+        implementation("com.google.android.material:material:1.9.0")
+        implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+        // ✅ Google Sign-In
+        implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+        // ✅ Google Calendar API client libs
+        implementation("com.google.api-client:google-api-client-android:1.34.0")
+        implementation("com.google.http-client:google-http-client-android:1.43.3")
+        implementation("com.google.http-client:google-http-client-gson:1.43.3")
+        implementation("com.google.apis:google-api-services-calendar:v3-rev411-1.25.0")
+        //added now testing
+        implementation("com.google.http-client:google-http-client-jackson2:1.41.4")
+        //implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+
+
 
 }
+
+
+

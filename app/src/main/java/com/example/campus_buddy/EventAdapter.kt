@@ -5,12 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.campus_buddy.R
-import com.example.campus_buddy.Event
 
 class EventAdapter(
-    private var events: List<Event>,
-    private val onItemClick: (Event) -> Unit
+    private var events: List<UnifiedEvent>,
+    private val onItemClick: (UnifiedEvent) -> Unit
 ) : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
 
     inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,12 +28,17 @@ class EventAdapter(
         holder.time.text = event.time ?: "No time"
         holder.description.text = event.description ?: "No description"
 
+        // Highlight Google events (optional)
+        if (event.isGoogleEvent) {
+            holder.title.setTextColor(holder.itemView.context.getColor(android.R.color.holo_blue_dark))
+        }
+
         holder.itemView.setOnClickListener { onItemClick(event) }
     }
 
     override fun getItemCount(): Int = events.size
 
-    fun updateEvents(newEvents: List<Event>) {
+    fun updateEvents(newEvents: List<UnifiedEvent>) {
         events = newEvents
         notifyDataSetChanged()
     }
