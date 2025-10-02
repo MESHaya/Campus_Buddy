@@ -29,7 +29,7 @@ import com.google.api.services.calendar.CalendarScopes
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.concurrent.thread
 
-class CalendarFragment : Fragment() {
+class CalendarFragment<T> : Fragment() {
 
     private lateinit var calendarView: CalendarView
     private lateinit var recyclerView: RecyclerView
