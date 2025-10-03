@@ -216,7 +216,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Zoe"
+                    android:text="TestCaller"
                     android:textColor="#000000"
                     android:textSize="16sp" />
 
@@ -232,7 +232,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0832226432"
+                    android:text="083 222 6432"
                     android:textColor="#000000"
                     android:textSize="16sp" />
             </LinearLayout>

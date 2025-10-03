@@ -42,7 +42,7 @@ class EmergencyFragment : Fragment() {
             dialPhoneNumber("0119504099")
         }
 
-        // dial Zoe test caller
+        // dial test caller
         val zoeCall: ImageView = view.findViewById(R.id.callZoe)
         zoeCall.setOnClickListener {
             dialPhoneNumber("0832226432")

@@ -25,7 +25,7 @@ class SettingsFragment : Fragment() {
     private lateinit var prefs: android.content.SharedPreferences
     private var notificationsSwitch: Switch? = null
 
-    // ✅ Permission launcher for Android 13+ notifications
+    //Permission launcher for Android 13+ notifications
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -49,7 +49,7 @@ class SettingsFragment : Fragment() {
 
         prefs = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
 
-        // ✅ DARK MODE SWITCH
+        //DARK MODE SWITCH
         val darkModeSwitch: Switch = view.findViewById(R.id.darkModeSwitch)
         val isDarkMode = prefs.getBoolean("DarkMode", false)
         darkModeSwitch.isChecked = isDarkMode
@@ -62,7 +62,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        // ✅ NOTIFICATIONS SWITCH
+        //NOTIFICATIONS SWITCH
         notificationsSwitch = view.findViewById(R.id.notificationsSwitch)
         val notificationsEnabled = prefs.getBoolean("Notifications", true)
         notificationsSwitch?.isChecked = notificationsEnabled
@@ -75,7 +75,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        // ✅ LANGUAGE SPINNER
+        //LANGUAGE SPINNER
         val languageSpinner: Spinner = view.findViewById(R.id.languageSpinner)
         val savedLang = prefs.getString("Language", "English")
 
@@ -103,7 +103,7 @@ class SettingsFragment : Fragment() {
         return view
     }
 
-    // ✅ Ask for notification permission (Android 13+)
+    //Ask for notification permission (Android 13+)
     private fun askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
@@ -129,7 +129,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // ✅ Show a simple test notification
+    //Show a simple test notification
     private fun showTestNotification() {
         val channelId = "settings_channel"
         val notificationManager =
@@ -153,7 +153,7 @@ class SettingsFragment : Fragment() {
         notificationManager.notify(1, notification)
     }
 
-    // ✅ Helper to update app language instantly
+    //Helper to update app language instantly
     private fun updateLanguage(language: String) {
         val locale = when (language) {
             "French" -> Locale.FRENCH
