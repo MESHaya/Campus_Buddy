@@ -25,6 +25,7 @@ class SettingsFragment : Fragment() {
 
     private lateinit var prefs: android.content.SharedPreferences
     private var notificationsSwitch: SwitchMaterial? = null
+    private var isInitializing = true // Flag to prevent initial trigger
 
     // Permission launcher for Android 13+ notifications
     private val requestPermissionLauncher = registerForActivityResult(
@@ -50,6 +51,13 @@ class SettingsFragment : Fragment() {
 
         prefs = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
 
+        // ----------------- APPLY SAVED DARK MODE ON LOAD -----------------
+        val isDarkMode = prefs.getBoolean("DarkMode", false)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         // ----------------- BACK BUTTON -----------------
         val btnBack: ImageButton = view.findViewById(R.id.btnBack)
         btnBack.setOnClickListener {
@@ -58,7 +66,6 @@ class SettingsFragment : Fragment() {
 
         // ----------------- DARK MODE SWITCH -----------------
         val darkModeSwitch: SwitchMaterial = view.findViewById(R.id.darkModeSwitch)
-        val isDarkMode = prefs.getBoolean("DarkMode", false)
         darkModeSwitch.isChecked = isDarkMode
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("DarkMode", isChecked).apply()
@@ -72,7 +79,10 @@ class SettingsFragment : Fragment() {
         // ----------------- NOTIFICATIONS SWITCH -----------------
         notificationsSwitch = view.findViewById(R.id.notificationsSwitch)
         val notificationsEnabled = prefs.getBoolean("Notifications", true)
+
+        // Set initial state without triggering listener
         notificationsSwitch?.isChecked = notificationsEnabled
+
         notificationsSwitch?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 askNotificationPermission()
@@ -84,24 +94,31 @@ class SettingsFragment : Fragment() {
 
         // ----------------- LANGUAGE SPINNER -----------------
         val languageSpinner: Spinner = view.findViewById(R.id.languageSpinner)
-        val savedLang = prefs.getString("Language", "English")
+        val savedLang = prefs.getString("Language", "English") ?: "English"
 
         // Pre-select the saved language
         val langArray = resources.getStringArray(R.array.languages)
         val savedIndex = langArray.indexOf(savedLang)
         if (savedIndex >= 0) {
-            languageSpinner.setSelection(savedIndex)
+            languageSpinner.setSelection(savedIndex, false) // false = don't trigger listener
         }
 
         languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (isInitializing) {
+                    isInitializing = false
+                    return // Skip the first automatic trigger
+                }
+
                 val selectedLang = parent.getItemAtPosition(position).toString()
-                prefs.edit().putString("Language", selectedLang).apply()
+                val currentLang = prefs.getString("Language", "English")
 
-                // Optional: Update app language instantly
-                updateLanguage(selectedLang)
-
-                Toast.makeText(requireContext(), "Language set to $selectedLang", Toast.LENGTH_SHORT).show()
+                // Only update if language actually changed
+                if (selectedLang != currentLang) {
+                    prefs.edit().putString("Language", selectedLang).apply()
+                    updateLanguage(selectedLang)
+                    Toast.makeText(requireContext(), "Language set to $selectedLang", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -118,6 +135,7 @@ class SettingsFragment : Fragment() {
                         PackageManager.PERMISSION_GRANTED -> {
                     prefs.edit().putBoolean("Notifications", true).apply()
                     showTestNotification()
+                    Toast.makeText(requireContext(), "Notifications enabled ✅", Toast.LENGTH_SHORT).show()
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                     Toast.makeText(requireContext(), "Notification permission required", Toast.LENGTH_LONG).show()
@@ -131,6 +149,7 @@ class SettingsFragment : Fragment() {
             // For older Android versions, enable notifications directly
             prefs.edit().putBoolean("Notifications", true).apply()
             showTestNotification()
+            Toast.makeText(requireContext(), "Notifications enabled ✅", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -34,9 +34,9 @@ class MainActivity : AppCompatActivity() {
             val selectedFragment = when (item.itemId) {
                 R.id.nav_home -> HomeFragment()
                 R.id.nav_todo -> TasksFragment()
-                R.id.nav_maps -> MapFragment()
-                R.id.nav_attendance -> AttendanceFragment()
-                R.id.nav_calendar -> CalendarFragment<Any>()
+                R.id.nav_settings -> SettingsFragment()
+                R.id.nav_emergency -> EmergencyFragment()
+                R.id.nav_calendar -> CalendarFragment()
                 else -> HomeFragment()
             }
             supportFragmentManager.beginTransaction()

@@ -9,16 +9,16 @@
         android:title="Calendar"
         android:icon="@android:drawable/ic_menu_agenda"/>
     <item
-        android:id="@+id/nav_attendance"
-        android:title="Attendance"
-        android:icon="@android:drawable/ic_menu_my_calendar"/>
+        android:id="@+id/nav_emergency"
+        android:title="Emergency"
+        android:icon="@android:drawable/alert_dark_frame"/>
     <item
         android:id="@+id/nav_todo"
         android:title="To-Do"
         android:icon="@android:drawable/ic_menu_edit"/>
     <item
-        android:id="@+id/nav_maps"
-        android:title="Maps"
-        android:icon="@android:drawable/ic_menu_mapmode"/>
+        android:id="@+id/nav_settings"
+        android:title="Settings"
+        android:icon="@android:drawable/ic_menu_edit"/>
 
 </menu>

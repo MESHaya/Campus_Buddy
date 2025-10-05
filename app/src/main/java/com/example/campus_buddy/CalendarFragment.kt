@@ -29,7 +29,7 @@ import com.google.api.services.calendar.CalendarScopes
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.concurrent.thread
 
-class CalendarFragment<T> : Fragment() {
+class CalendarFragment : Fragment() {
 
     private lateinit var calendarView: CalendarView
     private lateinit var recyclerView: RecyclerView
@@ -251,14 +251,15 @@ class CalendarFragment<T> : Fragment() {
 
         builder.setView(layout)
         builder.setPositiveButton("Update") { _, _ ->
-            val updatedEvent = LocalEvent(
-                id = event.id.toInt().toString(),
+            val updatedEvent = Event(
+                id = event.id.toInt(),
                 title = etTitle.text.toString(),
                 date = selectedDate,
                 time = etTime.text.toString(),
                 description = etDescription.text.toString()
             )
             db.updateEvent(updatedEvent)
+
             loadEvents(selectedDate)
             Toast.makeText(requireContext(), "Event updated", Toast.LENGTH_SHORT).show()
         }

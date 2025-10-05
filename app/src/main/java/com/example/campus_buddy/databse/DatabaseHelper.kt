@@ -5,13 +5,13 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import com.example.campus_buddy.data.LocalEvent
+import com.example.campus_buddy.Event
 import com.example.campusbuddy.data.Task
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Create other tables
+        // Create tables
         db.execSQL(UserTable.SQL_CREATE)
         db.execSQL(TaskTable.SQL_CREATE)
         db.execSQL(EventTable.SQL_CREATE)
@@ -45,6 +45,137 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         onCreate(db)
     }
 
+    // ----------------- USER METHODS -----------------
+    fun getAllUsersDebug() {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${UserTable.TABLE_NAME}", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_ID))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_NAME))
+                val surname = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_SURNAME))
+                val username = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_USERNAME))
+                val email = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_EMAIL))
+                val studentNum = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_STUDENT_NUM))
+                val password = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_PASSWORD))
+
+                Log.d("DB_DEBUG", "User: id=$id, name=$name,$surname username=$username, email=$email, studentNum=$studentNum")
+            } while (cursor.moveToNext())
+        } else {
+            Log.d("DB_DEBUG", "No users found")
+        }
+
+        cursor.close()
+        db.close()
+    }
+
+    fun insertUser(name: String, surname: String, username: String, email: String, studentID: String, password: String) {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(UserTable.COL_ID, System.currentTimeMillis().toString())
+            put(UserTable.COL_NAME, "$name $surname")
+            put(UserTable.COL_USERNAME, username)
+            put(UserTable.COL_EMAIL, email)
+            put(UserTable.COL_STUDENT_NUM, studentID)
+            put(UserTable.COL_PASSWORD, password)
+        }
+        val result = db.insert(UserTable.TABLE_NAME, null, values)
+        db.close()
+
+        if (result == -1L) {
+            Log.e("DB_ERROR", "Failed to insert user")
+        } else {
+            Log.d("DB_DEBUG", "User inserted with rowid=$result")
+        }
+    }
+
+    // ----------------- TASK METHODS -----------------
+    fun insertTask(title: String, description: String, dueAt: String, status: String = "todo"): Long {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(TaskTable.COL_ID, System.currentTimeMillis().toString())
+            put(TaskTable.COL_TITLE, title)
+            put(TaskTable.COL_DESCRIPTION, description)
+            put(TaskTable.COL_DUE_AT, dueAt)
+            put(TaskTable.COL_STATUS, status)
+        }
+        val result = db.insert(TaskTable.TABLE_NAME, null, values)
+        db.close()
+        return result
+    }
+    fun updateTaskStatus(taskId: String, newStatus: String): Int {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(TaskTable.COL_STATUS, newStatus)
+        }
+        val result = db.update(
+            TaskTable.TABLE_NAME,
+            values,
+            "${TaskTable.COL_ID} = ?",
+            arrayOf(taskId)
+        )
+        db.close()
+        return result
+    }
+
+    fun getTasksByDate(date: String): List<Task> {
+        val tasks = mutableListOf<Task>()
+        val db = readableDatabase
+        val cursor = db.query(
+            TaskTable.TABLE_NAME,
+            null,
+            "${TaskTable.COL_DUE_AT}=?",
+            arrayOf(date),
+            null,
+            null,
+            null
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                tasks.add(
+                    Task(
+                        id = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_ID)),
+                        title = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_TITLE)),
+                        description = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DESCRIPTION)),
+                        dueAt = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DUE_AT)),
+                        status = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_STATUS))
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return tasks
+    }
+
+    fun getAllTasks(): List<Task> {
+        val tasks = mutableListOf<Task>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${TaskTable.TABLE_NAME}", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_ID))
+                val title = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_TITLE))
+                val description = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DESCRIPTION))
+                val dueAt = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_DUE_AT))
+                val priority = cursor.getInt(cursor.getColumnIndexOrThrow(TaskTable.COL_PRIORITY))
+                val status = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_STATUS))
+                val createdAt = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_CREATED_AT))
+
+                val task = Task(id, title, description, priority.toString(), dueAt, status, createdAt)
+                tasks.add(task)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        return tasks
+    }
+
     // ----------------- EVENT (CALENDAR) METHODS -----------------
     fun insertEvent(title: String, date: String, time: String?, description: String?): Long {
         val db = writableDatabase
@@ -59,27 +190,27 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return result
     }
 
-    fun getEventsByDate(date: String): List<LocalEvent> {
+    fun getEventsByDate(date: String): List<Event> {
         val db = readableDatabase
         val cursor = db.query(
             TABLE_EVENTS, null, "$COLUMN_DATE = ?", arrayOf(date),
             null, null, "$COLUMN_TIME ASC"
         )
 
-        val events = mutableListOf<LocalEvent>()
+        val events = mutableListOf<Event>()
         while (cursor.moveToNext()) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID))
             val title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE))
             val time = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TIME))
             val description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
-            events.add(LocalEvent(id.toString(), title, date, time, description))
+            events.add(Event(id, title, date, time, description))
         }
         cursor.close()
         db.close()
         return events
     }
 
-    fun updateEvent(event: LocalEvent): Int {
+    fun updateEvent(event: Event): Int {
         val db = writableDatabase
         val values = ContentValues().apply {
             put(COLUMN_TITLE, event.title)
@@ -101,7 +232,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         const val DATABASE_NAME = "campusbuddy.db"
-        const val DATABASE_VERSION = 4  // bumped because schema changed to LocalEvent
+        const val DATABASE_VERSION = 3  // bumped version for new events table
 
         // Events Table
         const val TABLE_EVENTS = "events"
