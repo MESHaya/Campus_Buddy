@@ -5,4 +5,7 @@
     <color name="blue">#113F7D</color>
     <color name="gray">#C5CDE4</color>
     <color name="red">#FD3131</color>
+    <color name="primaryDark">#113F7D</color>
+    <color name="primaryLight">#3F69A8</color>
+
 </resources>

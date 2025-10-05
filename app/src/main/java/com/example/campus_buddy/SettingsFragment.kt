@@ -10,22 +10,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ImageButton
 import android.widget.Spinner
-import android.widget.Switch
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.*
 
 class SettingsFragment : Fragment() {
 
     private lateinit var prefs: android.content.SharedPreferences
-    private var notificationsSwitch: Switch? = null
+    private var notificationsSwitch: SwitchMaterial? = null
 
-    //Permission launcher for Android 13+ notifications
+    // Permission launcher for Android 13+ notifications
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -49,8 +50,14 @@ class SettingsFragment : Fragment() {
 
         prefs = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
 
-        //DARK MODE SWITCH
-        val darkModeSwitch: Switch = view.findViewById(R.id.darkModeSwitch)
+        // ----------------- BACK BUTTON -----------------
+        val btnBack: ImageButton = view.findViewById(R.id.btnBack)
+        btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        // ----------------- DARK MODE SWITCH -----------------
+        val darkModeSwitch: SwitchMaterial = view.findViewById(R.id.darkModeSwitch)
         val isDarkMode = prefs.getBoolean("DarkMode", false)
         darkModeSwitch.isChecked = isDarkMode
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -62,7 +69,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        //NOTIFICATIONS SWITCH
+        // ----------------- NOTIFICATIONS SWITCH -----------------
         notificationsSwitch = view.findViewById(R.id.notificationsSwitch)
         val notificationsEnabled = prefs.getBoolean("Notifications", true)
         notificationsSwitch?.isChecked = notificationsEnabled
@@ -75,7 +82,7 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        //LANGUAGE SPINNER
+        // ----------------- LANGUAGE SPINNER -----------------
         val languageSpinner: Spinner = view.findViewById(R.id.languageSpinner)
         val savedLang = prefs.getString("Language", "English")
 
@@ -86,31 +93,29 @@ class SettingsFragment : Fragment() {
             languageSpinner.setSelection(savedIndex)
         }
 
-        languageSpinner.setOnItemSelectedListener(object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
+        languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedLang = parent.getItemAtPosition(position).toString()
                 prefs.edit().putString("Language", selectedLang).apply()
 
-                // 🌍 Optional: Update app language instantly
+                // Optional: Update app language instantly
                 updateLanguage(selectedLang)
 
                 Toast.makeText(requireContext(), "Language set to $selectedLang", Toast.LENGTH_SHORT).show()
             }
 
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
-        })
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
 
         return view
     }
 
-    //Ask for notification permission (Android 13+)
+    // ----------------- NOTIFICATION PERMISSION -----------------
     private fun askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED -> {
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) ==
+                        PackageManager.PERMISSION_GRANTED -> {
                     prefs.edit().putBoolean("Notifications", true).apply()
                     showTestNotification()
                 }
@@ -123,13 +128,13 @@ class SettingsFragment : Fragment() {
                 }
             }
         } else {
-            // For older Android versions, just enable directly
+            // For older Android versions, enable notifications directly
             prefs.edit().putBoolean("Notifications", true).apply()
             showTestNotification()
         }
     }
 
-    //Show a simple test notification
+    // ----------------- TEST NOTIFICATION -----------------
     private fun showTestNotification() {
         val channelId = "settings_channel"
         val notificationManager =
@@ -144,7 +149,7 @@ class SettingsFragment : Fragment() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        val notification = NotificationCompat.Builder(requireContext(), channelId)
+        val notification = androidx.core.app.NotificationCompat.Builder(requireContext(), channelId)
             .setContentTitle("Campus Buddy")
             .setContentText("Notifications are enabled 🎉")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -153,11 +158,13 @@ class SettingsFragment : Fragment() {
         notificationManager.notify(1, notification)
     }
 
-    //Helper to update app language instantly
+    // ----------------- UPDATE LANGUAGE -----------------
     private fun updateLanguage(language: String) {
         val locale = when (language) {
-            "French" -> Locale.FRENCH
-            "Spanish" -> Locale("es")
+            "English" -> Locale.ENGLISH
+            "Afrikaans" -> Locale("af")
+            "Zulu" -> Locale("zu")
+            "Sotho" -> Locale("st")
             else -> Locale.ENGLISH
         }
         Locale.setDefault(locale)
@@ -167,8 +174,6 @@ class SettingsFragment : Fragment() {
             config,
             requireActivity().baseContext.resources.displayMetrics
         )
-
-        // Refresh activity to apply language
         requireActivity().recreate()
     }
 }

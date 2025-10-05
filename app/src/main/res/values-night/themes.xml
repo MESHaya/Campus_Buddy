@@ -1,7 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <!-- Base application theme. -->
-    <style name="Base.Theme.Campus_Buddy" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.CampusBuddy" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">#113F7D</item>
+        <item name="colorPrimaryVariant">#0D2B5B</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#3F69A8</item>
+        <item name="colorSecondaryVariant">#2B4B7A</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
+        <!-- Material Components default for switches -->
+        <item name="switchStyle">@style/Widget.MaterialComponents.CompoundButton.Switch</item>
+        <item name="android:textColorPrimary">#000000</item>
     </style>
+
 </resources>

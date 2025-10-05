@@ -20,7 +20,7 @@
             android:contentDescription="Logo"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp" />
-        <!-- Panashe storing session of lightmode and darkmode for specific user -->
+
         <!-- Top bar with back button and title -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,8 +48,6 @@
                 android:textColor="#113F7D"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
-
-
 
         <!-- Language option card -->
         <LinearLayout
@@ -79,7 +77,8 @@
                     android:layout_height="wrap_content"
                     android:text="Language"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="#113F7D" />
 
                 <Spinner
                     android:id="@+id/languageSpinner"
@@ -107,37 +106,43 @@
                 android:layout_marginEnd="12dp"
                 app:tint="#113F7D" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/notificationsSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Enable Notifications"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textColor="#113F7D"
+                app:trackTint="@color/primaryLight"
+                app:thumbTint="@color/primaryDark" />
         </LinearLayout>
 
         <!-- Dark mode toggle card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="12dp"
             android:background="@android:color/white"
             android:elevation="3dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_day"
                 android:layout_marginEnd="12dp"
+                android:src="@android:drawable/ic_menu_day"
                 app:tint="#113F7D" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/darkModeSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dark Mode"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textColor="#113F7D"
+                app:trackTint="@color/primaryLight"
+                app:thumbTint="@color/primaryDark" />
         </LinearLayout>
 
     </LinearLayout>
