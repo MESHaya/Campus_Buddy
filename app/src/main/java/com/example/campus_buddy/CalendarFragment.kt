@@ -25,11 +25,16 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
+import com.google.api.services.calendar.model.Event
+import com.google.api.services.calendar.model.EventDateTime
+import com.google.api.client.util.DateTime
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.concurrent.thread
 
-class CalendarFragment<T> : Fragment() {
+class CalendarFragment : Fragment() {
 
     private lateinit var calendarView: CalendarView
     private lateinit var recyclerView: RecyclerView
@@ -39,6 +44,7 @@ class CalendarFragment<T> : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
 
     private var selectedDate: String = ""
+    private var currentAccount: GoogleSignInAccount? = null
     private val RC_SIGN_IN = 1001
 
     override fun onCreateView(
@@ -87,6 +93,7 @@ class CalendarFragment<T> : Fragment() {
         if (account == null) {
             startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
         } else {
+            currentAccount = account
             fetchGoogleCalendarEvents(account)
         }
     }
@@ -98,6 +105,7 @@ class CalendarFragment<T> : Fragment() {
             try {
                 val account = task.getResult(Exception::class.java)
                 if (account != null) {
+                    currentAccount = account
                     Toast.makeText(
                         requireContext(),
                         "Signed in as ${account.email}",
@@ -170,6 +178,67 @@ class CalendarFragment<T> : Fragment() {
         }
     }
 
+    // --- ADD EVENT TO GOOGLE CALENDAR ---
+    private fun addEventToGoogleCalendar(title: String, date: String, time: String, description: String) {
+        val account = currentAccount
+        if (account == null) {
+            Toast.makeText(requireContext(), "Not signed in to Google", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        thread {
+            try {
+                val credential = GoogleAccountCredential
+                    .usingOAuth2(requireContext(), listOf(CalendarScopes.CALENDAR))
+                credential.selectedAccount = account.account
+
+                val service = Calendar.Builder(
+                    NetHttpTransport(),
+                    JacksonFactory.getDefaultInstance(),
+                    credential
+                ).setApplicationName("CampusBuddy").build()
+
+                // Parse date and time
+                val dateTimeString = "$date ${time.ifEmpty { "12:00" }}"
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+                val startDate = sdf.parse(dateTimeString) ?: Date()
+
+                // End time = start time + 1 hour
+                val endDate = Date(startDate.time + 3600000)
+
+                // Create Google Calendar Event
+                val event = Event().apply {
+                    summary = title
+                    this.description = description
+                    start = EventDateTime().apply {
+                        dateTime = DateTime(startDate)
+                        timeZone = TimeZone.getDefault().id
+                    }
+                    end = EventDateTime().apply {
+                        dateTime = DateTime(endDate)
+                        timeZone = TimeZone.getDefault().id
+                    }
+                }
+
+                // Insert event
+                service.events().insert("primary", event).execute()
+
+                requireActivity().runOnUiThread {
+                    Toast.makeText(requireContext(), "Event added to Google Calendar ✅", Toast.LENGTH_SHORT).show()
+                    fetchGoogleCalendarEvents(account) // Refresh to show new event
+                }
+            } catch (e: Exception) {
+                requireActivity().runOnUiThread {
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to add to Google Calendar: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
     // --- LOAD LOCAL EVENTS ---
     private fun loadEvents(date: String) {
         val localEvents = db.getEventsByDate(date).map { local ->
@@ -181,7 +250,10 @@ class CalendarFragment<T> : Fragment() {
                 isGoogleEvent = false
             )
         }
-        adapter.updateEvents(localEvents) // Google events will be appended async
+        adapter.updateEvents(localEvents)
+
+        // Refresh Google events if signed in
+        currentAccount?.let { fetchGoogleCalendarEvents(it) }
     }
 
     // --- ADD EVENT DIALOG ---
@@ -201,9 +273,14 @@ class CalendarFragment<T> : Fragment() {
             val desc = etDescription.text.toString()
 
             if (title.isNotEmpty()) {
+                // Save locally
                 db.insertEvent(title, selectedDate, time, desc)
+
+                // Also add to Google Calendar
+                addEventToGoogleCalendar(title, selectedDate, time, desc)
+
                 loadEvents(selectedDate)
-                Toast.makeText(requireContext(), "Event added", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Event saved locally", Toast.LENGTH_SHORT).show()
             }
         }
         builder.setNegativeButton("Cancel", null)
@@ -215,7 +292,7 @@ class CalendarFragment<T> : Fragment() {
         if (event.isGoogleEvent) {
             Toast.makeText(
                 requireContext(),
-                "Google events can’t be edited locally.",
+                "Google events can't be edited from this app.",
                 Toast.LENGTH_SHORT
             ).show()
             return
@@ -251,14 +328,15 @@ class CalendarFragment<T> : Fragment() {
 
         builder.setView(layout)
         builder.setPositiveButton("Update") { _, _ ->
-            val updatedEvent = LocalEvent(
-                id = event.id.toInt().toString(),
+            val updatedEvent = Event(
+                id = event.id.toInt(),
                 title = etTitle.text.toString(),
                 date = selectedDate,
                 time = etTime.text.toString(),
                 description = etDescription.text.toString()
             )
             db.updateEvent(updatedEvent)
+
             loadEvents(selectedDate)
             Toast.makeText(requireContext(), "Event updated", Toast.LENGTH_SHORT).show()
         }
