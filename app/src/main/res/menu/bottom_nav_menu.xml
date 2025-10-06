@@ -3,7 +3,8 @@
     <item
         android:id="@+id/nav_home"
         android:title="Home"
-        android:icon="@android:drawable/ic_menu_view"/>
+        android:icon="@android:drawable/ic_menu_view"
+        />
     <item
         android:id="@+id/nav_calendar"
         android:title="Calendar"
@@ -19,6 +20,7 @@
     <item
         android:id="@+id/nav_settings"
         android:title="Settings"
-        android:icon="@android:drawable/ic_menu_edit"/>
+        android:icon="@android:drawable/ic_menu_preferences"
+        />
 
 </menu>

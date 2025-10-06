@@ -74,7 +74,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val db = writableDatabase
         val values = ContentValues().apply {
             put(UserTable.COL_ID, System.currentTimeMillis().toString())
-            put(UserTable.COL_NAME, "$name $surname")
+            put(UserTable.COL_NAME, "$name ")
+            put(UserTable.COL_SURNAME, " $surname")
             put(UserTable.COL_USERNAME, username)
             put(UserTable.COL_EMAIL, email)
             put(UserTable.COL_STUDENT_NUM, studentID)
@@ -150,6 +151,21 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
         return tasks
     }
+    fun updateTasksStatus(taskId: String, newStatus: String): Boolean {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put("status", newStatus)
+        }
+        val rowsAffected = db.update(
+            "Task",               // Table name in your DB
+            values,
+            "id = ?",             // WHERE clause
+            arrayOf(taskId)
+        )
+        db.close()
+        return rowsAffected > 0
+    }
+
 
     fun getAllTasks(): List<Task> {
         val tasks = mutableListOf<Task>()
