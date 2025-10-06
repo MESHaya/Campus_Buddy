@@ -1,5 +1,6 @@
 package com.example.campus_buddy
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.campus_buddy.databse.DatabaseHelper
 import com.example.campusbuddy.data.Task
+import java.util.Calendar
 
 class TasksFragment : Fragment() {
 
@@ -49,6 +51,27 @@ class TasksFragment : Fragment() {
         taskList.add(Task("1", "Sample Task", "This is a test", "High", "2025-10-01", "Due", "2025-09-30"))
         adapter.notifyDataSetChanged()
 
+        val tvTaskDateLabel = view.findViewById<TextView>(R.id.tvTaskDateLabel)
+
+        tvTaskDateLabel.setOnClickListener {
+            // Get current date
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            // Create and show date picker dialog
+            val datePicker = DatePickerDialog(requireContext(),
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    // When user selects a date
+                    val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                    tvTaskDateLabel.text = selectedDate
+                },
+                year, month, day
+            )
+
+            datePicker.show()
+        }
 
 
         // Load tasks from DB on start
