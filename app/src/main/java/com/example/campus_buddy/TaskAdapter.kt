@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.campusbuddy.data.Task
 
 class TaskAdapter(
-    private val tasks: MutableList<Task>,
-    private val onStatusChanged: (Task) -> Unit
+    private var tasks: List<Task>,
+    private val onStatusChanged: ((Task) -> Unit)? = null // 👈 made optional
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -25,18 +25,17 @@ class TaskAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_task, parent, false) // 👈 Here we connect item_task.xml
+            .inflate(R.layout.item_task, parent, false)
         return TaskViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
 
-        // Set values
         holder.tvTitle.text = task.title
         holder.tvDescription.text = task.description
 
-        // Set correct status
+        // Select correct status
         when (task.status) {
             "Due" -> holder.radioDue.isChecked = true
             "Done" -> holder.radioDone.isChecked = true
@@ -51,9 +50,15 @@ class TaskAdapter(
                 R.id.radioOverdue -> "Overdue"
                 else -> task.status
             }
-            onStatusChanged(task)
+            onStatusChanged?.invoke(task) // 👈 safe call
         }
     }
 
     override fun getItemCount(): Int = tasks.size
+
+
+    fun updateTasks(newTasks: List<Task>) {
+        tasks = newTasks.toMutableList()
+        notifyDataSetChanged()
+    }
 }
