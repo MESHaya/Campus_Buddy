@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#E8F0FF">
 
-    <!-- AppBar (Top Bar with Back Button + Title) -->
+    <!-- AppBar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -61,22 +61,14 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="12dp" />
 
-        <!-- Calendar View -->
+        <!-- Calendar View (now takes more space) -->
         <CalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="#FFFFFF"
-            android:elevation="2dp" />
-
-        <!-- Events List -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewEvents"
-            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingTop="8dp" />
+            android:background="#FFFFFF"
+            android:elevation="2dp" />
     </LinearLayout>
 
     <!-- Floating Add Event Button -->
@@ -90,7 +82,5 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="72dp"
         android:contentDescription="Add Event" />
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
