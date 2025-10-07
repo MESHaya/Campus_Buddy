@@ -85,6 +85,7 @@ class TasksFragment : Fragment() {
                     createdAt = System.currentTimeMillis().toString()
                 )
 
+
                 taskList.add(task)
                 adapter.notifyItemInserted(taskList.size - 1)
 
@@ -100,11 +101,25 @@ class TasksFragment : Fragment() {
                     Toast.makeText(requireContext(), "Please select a due date", Toast.LENGTH_SHORT).show()
                 }
             }
+            // Find the button
+            val btnAllTasks = view.findViewById<Button>(R.id.btnAllTasks)
+
+            // Handle navigation
+            btnAllTasks.setOnClickListener {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, AllTasksFragment()) // 👈 Use your container ID
+                    .addToBackStack(null) // allows back navigation
+                    .commit()
+            }
+
         }
 
 
         return view
     }
+
+
+
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
