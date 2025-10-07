@@ -49,52 +49,8 @@
                 android:textColor="#113F7D" />
         </LinearLayout>
 
-        <!-- Description
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select which tasks you want to display:"
-            android:textSize="16sp"
-            android:textColor="#555555"
-            android:layout_marginTop="8dp" />
-             -->
 
-        <!-- Radio buttons
-        <RadioGroup
-            android:id="@+id/radioGroupTasks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="12dp">
-
-            <RadioButton
-                android:id="@+id/radioDueTasks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Due"
-                android:checked="true"
-                android:textColor="#000000" />
-
-            <RadioButton
-                android:id="@+id/radioDoneTasks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Done"
-                android:layout_marginStart="24dp"
-                android:textColor="#000000" />
-
-            <RadioButton
-                android:id="@+id/radioOverDueTasks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="OverDue"
-                android:layout_marginStart="24dp"
-                android:textColor="#000000" />
-        </RadioGroup>
-
-         Task input -->
+         <!--Task input -->
         <EditText
             android:id="@+id/etTaskTitle"
             android:layout_width="match_parent"
@@ -132,10 +88,10 @@
        android:background="@android:drawable/edit_text"
        android:textColor="#555"
        android:textSize="14sp"
-       android:drawableEnd="@android:drawable/ic_menu_today"
        android:focusable="true"
        android:clickable="true"
-       android:layout_marginBottom="8dp" />
+       android:layout_marginBottom="8dp"
+       app:drawableEndCompat="@android:drawable/ic_menu_today" />
 
    <!-- Save button -->
         <Button

@@ -53,7 +53,6 @@ class TasksFragment : Fragment() {
 
         // Load tasks from DB on start
         loadTasksFromDatabase()
-
         btnSaveTask.setOnClickListener {
             val title = etTaskTitle.text.toString()
             val description = etTaskDescription.text.toString()
