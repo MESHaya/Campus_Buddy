@@ -49,7 +49,7 @@ After syncing completes, connect your Android device or start an emulator, then 
 
 ---
 
-# 🎬 YouTube Link: 
+# 🎬 YouTube Link: https://youtu.be/7RIUY8tVlus
 
 ---
 
