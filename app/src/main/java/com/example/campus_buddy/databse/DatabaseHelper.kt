@@ -70,17 +70,24 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
     }
 
-    fun insertUser(name: String, surname: String, username: String, email: String, studentID: String, password: String) {
+    fun insertUser(
+        name: String,
+        surname: String,
+        username: String,
+        email: String,
+        studentID: String,
+        password: String
+    ) {
         val db = writableDatabase
         val values = ContentValues().apply {
-            put(UserTable.COL_ID, System.currentTimeMillis().toString())
-            put(UserTable.COL_NAME, "$name ")
-            put(UserTable.COL_SURNAME, " $surname")
-            put(UserTable.COL_USERNAME, username)
-            put(UserTable.COL_EMAIL, email)
-            put(UserTable.COL_STUDENT_NUM, studentID)
+            put(UserTable.COL_NAME, name.trim())
+            put(UserTable.COL_SURNAME, surname.trim())
+            put(UserTable.COL_USERNAME, username.trim())
+            put(UserTable.COL_EMAIL, email.trim())
+            put(UserTable.COL_STUDENT_NUM, studentID.trim())
             put(UserTable.COL_PASSWORD, password)
         }
+
         val result = db.insert(UserTable.TABLE_NAME, null, values)
         db.close()
 
@@ -90,6 +97,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             Log.d("DB_DEBUG", "User inserted with rowid=$result")
         }
     }
+
 
     // ----------------- TASK METHODS -----------------
     fun insertTask(title: String, description: String, dueAt: String, status: String = "todo"): Long {

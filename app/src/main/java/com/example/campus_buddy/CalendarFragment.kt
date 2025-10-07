@@ -102,7 +102,6 @@ class CalendarFragment : Fragment() {
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             selectedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
             loadEvents(selectedDate)
-            showEventsPopup(selectedDate)
         }
 
         fabAdd.setOnClickListener { showAddEventDialog() }
@@ -112,35 +111,20 @@ class CalendarFragment : Fragment() {
         return view
     }
 
-    // --- SHOW EVENTS POPUP ---
     private fun showEventsPopup(date: String) {
-        val eventsForDate = cachedEvents.filter { event ->
-            val eventTime = event.time ?: ""
+        // Filter events whose time starts with the selected date
 
-            // For local events, compare dates directly
-            if (!event.isGoogleEvent) {
-                eventTime.startsWith(date) || date == selectedDate
-            } else {
-                // For Google events, parse the date from the time string
-                try {
-                    if (eventTime.length >= 10) {
-                        val eventDate = eventTime.substring(0, 10)
-                        eventDate == date
-                    } else {
-                        false
-                    }
-                } catch (e: Exception) {
-                    false
-                }
-            }
-        }
+        val eventsForDate = cachedEvents.filter { it.time?.startsWith(date) ?: false }
+
+
+        Log.d(TAG, "Events for $date: ${eventsForDate.map { it.title + " | " + it.time }}")
 
         if (eventsForDate.isEmpty()) {
             Toast.makeText(requireContext(), "No events on this date", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Create a custom dialog with RecyclerView
+        // Inflate dialog layout with RecyclerView
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_events_list, null)
 
@@ -152,10 +136,12 @@ class CalendarFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+        // Format date for display
         val displayDate = try {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            dateFormat.format(sdf.parse(date) ?: Date())
+            val parsedDate = sdf.parse(date)
+            val displayFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+            displayFormat.format(parsedDate ?: Date())
         } catch (e: Exception) {
             date
         }
@@ -169,6 +155,8 @@ class CalendarFragment : Fragment() {
             }
             .show()
     }
+
+
 
     // --- GOOGLE SIGN IN ---
     private fun setupGoogleSignIn() {
@@ -193,14 +181,14 @@ class CalendarFragment : Fragment() {
             signInLauncher.launch(googleSignInClient.signInIntent)
         }
     }
-
-    // --- FETCH GOOGLE EVENTS ---
     private fun fetchGoogleCalendarEvents(account: GoogleSignInAccount) {
         thread {
             try {
-                val credential = GoogleAccountCredential
-                    .usingOAuth2(requireContext(), listOf(CalendarScopes.CALENDAR))
-                credential.selectedAccount = account.account
+                val credential = GoogleAccountCredential.usingOAuth2(
+                    requireContext(),
+                    listOf(CalendarScopes.CALENDAR)
+                )
+                credential.selectedAccount = account.account!!
 
                 val service = Calendar.Builder(
                     NetHttpTransport(),
@@ -208,36 +196,41 @@ class CalendarFragment : Fragment() {
                     credential
                 ).setApplicationName("CampusBuddy").build()
 
+                val now = DateTime(System.currentTimeMillis())
+                val oneYearFromNow = DateTime(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000)
+
                 val events = service.events().list("primary")
-                    .setMaxResults(100)
+                    .setMaxResults(250)
+                    .setTimeMin(DateTime("2000-01-01T00:00:00Z"))
+                    .setTimeMax(oneYearFromNow)
+                    .setOrderBy("startTime")
+                    .setSingleEvents(true)
                     .execute()
                     .items
 
-                Log.d(TAG, "Fetched ${events.size} Google events")
+                val googleEvents = events.mapNotNull { ev ->
+                    val dateString = ev.start?.dateTime?.toString() ?: ev.start?.date?.toString()
+                    if (dateString == null) return@mapNotNull null
 
-                val googleEvents = events.map { ev ->
+                    val normalizedDate = if (dateString.contains("T")) dateString.substring(0, 10) else dateString
+
+                    Log.d(TAG, "Fetched Google event: ${ev.summary} | normalizedDate=$normalizedDate")
+
                     UnifiedEvent(
                         id = ev.id ?: "0",
                         title = ev.summary ?: "No Title",
-                        time = ev.start?.dateTime?.toString() ?: ev.start?.date?.toString() ?: "No time",
+                        time = normalizedDate,
                         description = ev.description ?: "",
                         isGoogleEvent = true
                     )
                 }
 
                 requireActivity().runOnUiThread {
-                    val localEvents = db.getEventsByDate(selectedDate).map { local ->
-                        UnifiedEvent(
-                            id = local.id.toString(),
-                            title = local.title,
-                            time = local.time,
-                            description = local.description,
-                            isGoogleEvent = false
-                        )
-                    }
-
-                    cachedEvents = localEvents + googleEvents
+                    cachedEvents = cachedEvents + googleEvents
+                    Log.d(TAG, "Total cached events after fetch: ${cachedEvents.size}")
+                    showEventsPopup(selectedDate)
                 }
+
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching Google events", e)
                 requireActivity().runOnUiThread {
@@ -250,6 +243,7 @@ class CalendarFragment : Fragment() {
             }
         }
     }
+
 
     // --- ADD EVENT TO GOOGLE CALENDAR ---
     private fun addEventToGoogleCalendar(title: String, date: String, time: String, description: String) {
@@ -314,25 +308,28 @@ class CalendarFragment : Fragment() {
         }
     }
 
-    // --- LOAD LOCAL EVENTS ---
-    private fun loadEvents(date: String) {
-        val localEvents = db.getEventsByDate(date).map { local ->
+    private fun loadEvents(selectedDate: String) {
+        val localEvents = db.getEventsByDate(selectedDate).map { local ->
             UnifiedEvent(
                 id = local.id.toString(),
                 title = local.title,
-                time = local.time,
-                description = local.description,
+                time = "${local.date} ${local.time ?: ""}".trim(),
+                description = local.description ?: "",
                 isGoogleEvent = false
             )
         }
 
         cachedEvents = localEvents
 
-        currentAccount?.let {
-            Log.d(TAG, "Refreshing Google events")
-            fetchGoogleCalendarEvents(it)
-        } ?: Log.d(TAG, "Not signed in, showing only local events")
+        currentAccount?.let { account ->
+            fetchGoogleCalendarEvents(account)
+        } ?: run {
+            // Not signed in → just show local events
+            showEventsPopup(selectedDate)
+        }
     }
+
+
 
     // --- ADD EVENT DIALOG ---
     private fun showAddEventDialog() {

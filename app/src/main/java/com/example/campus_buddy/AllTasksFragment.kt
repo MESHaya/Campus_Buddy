@@ -19,7 +19,10 @@ class AllTasksFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var spinnerFilter: Spinner
-    private var allTasks: List<Task> = listOf()
+
+    private var allTasks: MutableList<Task> = mutableListOf()         // master list
+    private var displayedTasks: MutableList<Task> = mutableListOf()   // list shown in adapter
+    private var currentFilter: String = "All"                          // currently selected filter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,9 +36,19 @@ class AllTasksFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Load all tasks
-        allTasks = dbHelper.getAllTasks()
-        taskAdapter = TaskAdapter(allTasks)
+        // Load all tasks from DB
+        allTasks = dbHelper.getAllTasks().toMutableList()
+        displayedTasks = allTasks.toMutableList()  // initially show all tasks
+
+        taskAdapter = TaskAdapter(displayedTasks) { task ->
+            // Update the task in database
+            dbHelper.updateTaskStatus(task.id, task.status)
+
+            // Safely reapply the current filter
+            recyclerView.post {
+                filterTasks(currentFilter)
+            }
+        }
         recyclerView.adapter = taskAdapter
 
         setupFilterSpinner()
@@ -51,8 +64,8 @@ class AllTasksFragment : Fragment() {
 
         spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectedStatus = options[position]
-                filterTasks(selectedStatus)
+                currentFilter = options[position]  // update current filter
+                filterTasks(currentFilter)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -61,11 +74,15 @@ class AllTasksFragment : Fragment() {
 
     private fun filterTasks(status: String) {
         val filteredTasks = when (status) {
-            "Due" -> allTasks.filter { it.status.equals("Due", true) }
-            "Done" -> allTasks.filter { it.status.equals("Done", true) }
-            "Overdue" -> allTasks.filter { it.status.equals("Overdue", true) }
+            "Due" -> allTasks.filter { it.status == "todo" }
+            "Done" -> allTasks.filter { it.status == "done" }
+            "Overdue" -> allTasks.filter { it.status == "inprogress" }
             else -> allTasks
         }
-        taskAdapter.updateTasks(filteredTasks)
+
+        // Update displayedTasks safely
+        displayedTasks.clear()
+        displayedTasks.addAll(filteredTasks)
+        taskAdapter.notifyDataSetChanged()
     }
 }

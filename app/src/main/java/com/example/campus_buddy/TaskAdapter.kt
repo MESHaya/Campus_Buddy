@@ -25,35 +25,46 @@ class TaskAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_task, parent, false) // 👈 Here we connect item_task.xml
+            .inflate(R.layout.item_task, parent, false)
         return TaskViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
 
-        // Set values
+        // Display title & description
         holder.tvTitle.text = task.title
         holder.tvDescription.text = task.description
 
-        // Set correct status
+        // Set radio buttons based on DB status
         when (task.status) {
-            "Due" -> holder.radioDue.isChecked = true
-            "Done" -> holder.radioDone.isChecked = true
-            "Overdue" -> holder.radioOverdue.isChecked = true
+            "todo" -> holder.radioDue.isChecked = true
+            "done" -> holder.radioDone.isChecked = true
+            "inprogress" -> holder.radioOverdue.isChecked = true
         }
 
-        // Handle user changing status
+        // Handle status changes
         holder.radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            task.status = when (checkedId) {
-                R.id.radioDue -> "Due"
-                R.id.radioDone -> "Done"
-                R.id.radioOverdue -> "Overdue"
+            val newStatus = when (checkedId) {
+                R.id.radioDue -> "todo"
+                R.id.radioDone -> "done"
+                R.id.radioOverdue -> "inprogress"
                 else -> task.status
             }
-            onStatusChanged(task)
+
+            if (newStatus != task.status) {
+                task.status = newStatus
+                onStatusChanged(task) // safely update DB
+            }
         }
     }
 
     override fun getItemCount(): Int = tasks.size
+
+    // Update the list (for filtering)
+    fun updateTasks(newTasks: MutableList<Task>) {
+        tasks.clear()
+        tasks.addAll(newTasks)
+        notifyDataSetChanged()
+    }
 }

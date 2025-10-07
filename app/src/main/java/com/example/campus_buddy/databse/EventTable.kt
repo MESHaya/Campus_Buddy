@@ -6,6 +6,7 @@ object EventTable {
     const val COL_USER_ID = "userId"
     const val COL_TYPE = "type"
     const val COL_TITLE = "title"
+    const val COL_DATE = "date"
     const val COL_START_AT = "startAt"
     const val COL_END_AT = "endAt"
     const val COL_LOCATION = "location"
@@ -17,6 +18,7 @@ object EventTable {
             $COL_USER_ID TEXT,
             $COL_TYPE TEXT CHECK($COL_TYPE IN ('class','exam','assignment','other')),
             $COL_TITLE TEXT NOT NULL,
+            $COL_DATE TEXT NOT NULL,
             $COL_START_AT TIMESTAMP,
             $COL_END_AT TIMESTAMP,
             $COL_LOCATION TEXT,
