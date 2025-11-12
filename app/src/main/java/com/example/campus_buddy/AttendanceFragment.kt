@@ -1,32 +1,32 @@
 package com.example.campus_buddy
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
+import com.example.campus_buddy.data.Attendance
 import com.example.campus_buddy.databse.DatabaseHelper
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AttendanceFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AttendanceFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private lateinit var txtResult: TextView
+    private lateinit var dbHelper: DatabaseHelper // your DB helper/DAO
+
+    private val barcodeLauncher = registerForActivityResult(ScanContract()) { result ->
+        if (result.contents != null) {
+            handleQRCodeResult(result.contents)
+        } else {
+            Toast.makeText(requireContext(), "Scan cancelled", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -34,27 +34,73 @@ class AttendanceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_attendance, container, false)
+        val view = inflater.inflate(R.layout.fragment_attendance, container, false)
+        val btnScanQR = view.findViewById<Button>(R.id.btnScanQR)
+        txtResult = view.findViewById(R.id.tvResult)
+
+
+        dbHelper = DatabaseHelper(requireContext()) // initialize your DB connection
+
+        btnScanQR.setOnClickListener {
+            startQRScanner()
+        }
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AttendanceFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AttendanceFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun startQRScanner() {
+        val options = ScanOptions()
+        options.setPrompt("Scan class QR code")
+        options.setBeepEnabled(true)
+        options.setOrientationLocked(true)
+        barcodeLauncher.launch(options)
     }
+
+    private fun handleQRCodeResult(data: String) {
+        txtResult.text = "Scanned: $data"
+
+        // Example format: CLASS101|2025-11-12|SESSION2
+        val parts = data.split("|")
+        val classId = parts.getOrNull(0)
+        val date = parts.getOrNull(1)
+        val session = parts.getOrNull(2)
+
+        if (classId != null && date != null) {
+            if (session != null) {
+                markAttendance(
+                    "STU123", date, session,
+                    session = TODO()
+                )
+            }
+        } else {
+            Toast.makeText(requireContext(), "Invalid QR format", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun markAttendance(userId: String, moduleId: String, method: String, session: String?) {
+        // Make sure 'date' is defined somewhere, e.g., current date as string
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        val attendance = Attendance(
+            id = System.currentTimeMillis().toString(),
+            userId = userId,
+            moduleId = moduleId,
+            sessionAt = date + " " + (session ?: ""),
+            method = method, // use the method passed to the function
+            valid = true
+        )
+
+        val success = dbHelper.insertAttendance(
+            attendance.toString(),
+            moduleId = TODO(),
+            method = TODO(),
+            valid = TODO()
+        )
+        if (true) {
+            Toast.makeText(requireContext(), "Attendance marked!", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(requireContext(), "Already marked or DB error", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }

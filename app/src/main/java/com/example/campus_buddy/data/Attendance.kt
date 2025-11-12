@@ -3,8 +3,9 @@ package com.example.campus_buddy.data
 
 data class Attendance(
     val id: String,
-    val studentId: String,
+    val userId: String,
     val moduleId: String,
-    val date: String,
-    val status: String // "present", "absent", "late"
+    val sessionAt: String,
+    val method: String,
+    val valid: Boolean
 )
