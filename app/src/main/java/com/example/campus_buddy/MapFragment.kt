@@ -18,8 +18,8 @@ class MapFragment : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var btnBack: ImageButton
 
     // Campus locations - Update these coordinates with actual locations
-    private val msaLocation = LatLng(-26.1076, 28.0567) // IIE MSA coordinates
-    private val varsityLocation = LatLng(-26.1100, 28.0600) // IIE Varsity coordinates
+    private val msaLocation = LatLng(-26.0833, 27.8765) // IIE MSA coordinates
+    private val varsityLocation = LatLng(-26.09017666692695, 28.052551253580052) // IIE Varsity coordinates
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

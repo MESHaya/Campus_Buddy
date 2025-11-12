@@ -75,7 +75,7 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
 
     // Maps
-    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // ------------------------API SECTION --------------------------
 
