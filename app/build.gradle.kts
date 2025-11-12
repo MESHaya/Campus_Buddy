@@ -99,11 +99,35 @@ dependencies {
         implementation ("com.google.api-client:google-api-client-android:1.33.0")
         implementation ("com.google.api-client:google-api-client-gson:1.33.0")
 
+// WorkManager for background tasks (ADD THIS)
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
 
+    // Core AndroidX libraries
+    implementation ("androidx.core:core-ktx:1.12.0")
+    implementation ("androidx.appcompat:appcompat:1.6.1")
 
+    // Material Design
+    implementation ("com.google.android.material:material:1.11.0")
 
+    // ConstraintLayout
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
 
+    // Fragment KTX
+    implementation ("androidx.fragment:fragment-ktx:1.6.2")
+
+    // Lifecycle components
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+
+    // Testing
+    testImplementation ("junit:junit:4.13.2")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
 }
+
+
+
+
 
 
 
