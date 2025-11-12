@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import android.content.Intent
 
 class HomeFragment : Fragment() {
 
@@ -48,10 +49,8 @@ class HomeFragment : Fragment() {
 
         // Navigate to Map
         btnMap.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, MapFragment())
-                .addToBackStack(null)
-                .commit()
+            val intent = Intent(requireContext(), MapFragment::class.java)
+            startActivity(intent)
         }
 
         // Navigate to Emergency (can reuse AttendanceFragment or make EmergencyFragment)

@@ -1,60 +1,91 @@
 package com.example.campus_buddy
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.example.campus_buddy.databse.DatabaseHelper
+import android.widget.ImageButton
+import android.widget.RadioGroup
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class MapFragment : AppCompatActivity(), OnMapReadyCallback {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MapFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MapFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var googleMap: GoogleMap
+    private lateinit var radioGroupCampus: RadioGroup
+    private lateinit var btnBack: ImageButton
+
+    // Campus locations - Update these coordinates with actual locations
+    private val msaLocation = LatLng(-26.1076, 28.0567) // IIE MSA coordinates
+    private val varsityLocation = LatLng(-26.1100, 28.0600) // IIE Varsity coordinates
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+        setContentView(R.layout.fragment_map)
+
+        // Initialize views
+        radioGroupCampus = findViewById(R.id.radioGroupCampus)
+        btnBack = findViewById(R.id.btnBack)
+
+        // Set up the map fragment
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        // Back button functionality
+        btnBack.setOnClickListener {
+            finish()
+        }
+
+        // Radio button listener
+        radioGroupCampus.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioMSA -> {
+                    if (::googleMap.isInitialized) {
+                        showLocation(msaLocation, "IIE MSA")
+                    }
+                }
+                R.id.radioVarsity -> {
+                    if (::googleMap.isInitialized) {
+                        showLocation(varsityLocation, "IIE Varsity College")
+                    }
+                }
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false)
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+
+        // Configure map settings
+        googleMap.uiSettings.apply {
+            isZoomControlsEnabled = true
+            isCompassEnabled = true
+            isMyLocationButtonEnabled = false
+        }
+
+        // Show default location (MSA since it's checked by default)
+        showLocation(msaLocation, "IIE MSA")
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MapFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MapFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun showLocation(location: LatLng, title: String) {
+        // Clear existing markers
+        googleMap.clear()
+
+        // Add marker for the campus
+        googleMap.addMarker(
+            MarkerOptions()
+                .position(location)
+                .title(title)
+        )
+
+        // Move camera to the location with animation
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(location, 15f),
+            1000,
+            null
+        )
     }
 }

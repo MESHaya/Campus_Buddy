@@ -74,6 +74,9 @@ dependencies {
     // Logging
     implementation("com.jakewharton.timber:timber:5.0.1")
 
+    // Maps
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+
     // ------------------------API SECTION --------------------------
 
         implementation("androidx.core:core-ktx:1.12.0")
