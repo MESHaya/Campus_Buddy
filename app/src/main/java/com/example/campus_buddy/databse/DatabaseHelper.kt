@@ -6,9 +6,13 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.example.campus_buddy.Event
+import com.example.campus_buddy.notifications.CampusNotificationManager
 import com.example.campusbuddy.data.Task
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
+    // Initialize notification manager
+    private val notificationManager = CampusNotificationManager(context)
 
     override fun onCreate(db: SQLiteDatabase) {
         // Create tables
@@ -58,7 +62,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val username = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_USERNAME))
                 val email = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_EMAIL))
                 val studentNum = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_STUDENT_NUM))
-                val password = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_PASSWORD))
 
                 Log.d("DB_DEBUG", "User: id=$id, name=$name,$surname username=$username, email=$email, studentNum=$studentNum")
             } while (cursor.moveToNext())
@@ -98,8 +101,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
     }
 
-
-    // ----------------- TASK METHODS -----------------
+    // ----------------- TASK METHODS WITH NOTIFICATIONS -----------------
     fun insertTask(title: String, description: String, dueAt: String, status: String = "todo"): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -111,10 +113,34 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
         val result = db.insert(TaskTable.TABLE_NAME, null, values)
         db.close()
+
+        // SEND NOTIFICATION when task is added
+        if (result != -1L) {
+            notificationManager.notifyTaskAdded(title, description)
+            Log.d("DB_NOTIFICATION", "Task added notification sent for: $title")
+        }
+
         return result
     }
+
     fun updateTaskStatus(taskId: String, newStatus: String): Int {
         val db = writableDatabase
+
+        // Get task title for notification
+        val cursor = db.query(
+            TaskTable.TABLE_NAME,
+            arrayOf(TaskTable.COL_TITLE),
+            "${TaskTable.COL_ID} = ?",
+            arrayOf(taskId),
+            null, null, null
+        )
+
+        var taskTitle = ""
+        if (cursor.moveToFirst()) {
+            taskTitle = cursor.getString(cursor.getColumnIndexOrThrow(TaskTable.COL_TITLE))
+        }
+        cursor.close()
+
         val values = ContentValues().apply {
             put(TaskTable.COL_STATUS, newStatus)
         }
@@ -125,6 +151,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             arrayOf(taskId)
         )
         db.close()
+
+        // SEND NOTIFICATION when task status changes
+        if (result > 0 && taskTitle.isNotEmpty()) {
+            notificationManager.notifyTaskStatusChanged(taskTitle, newStatus)
+            Log.d("DB_NOTIFICATION", "Task status changed notification sent for: $taskTitle")
+        }
+
         return result
     }
 
@@ -159,21 +192,21 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
         return tasks
     }
+
     fun updateTasksStatus(taskId: String, newStatus: String): Boolean {
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put("status", newStatus)
         }
         val rowsAffected = db.update(
-            "Task",               // Table name in your DB
+            "Task",
             values,
-            "id = ?",             // WHERE clause
+            "id = ?",
             arrayOf(taskId)
         )
         db.close()
         return rowsAffected > 0
     }
-
 
     fun getAllTasks(): List<Task> {
         val tasks = mutableListOf<Task>()
@@ -200,7 +233,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return tasks
     }
 
-    // ----------------- EVENT (CALENDAR) METHODS -----------------
+    // ----------------- EVENT METHODS WITH NOTIFICATIONS -----------------
     fun insertEvent(title: String, date: String, time: String?, description: String?): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
@@ -211,6 +244,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
         val result = db.insert(TABLE_EVENTS, null, values)
         db.close()
+
+        // SEND NOTIFICATION when event is added
+        if (result != -1L) {
+            notificationManager.notifyEventAdded(title, date, time)
+            Log.d("DB_NOTIFICATION", "Event added notification sent for: $title")
+        }
+
         return result
     }
 
@@ -254,9 +294,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return result
     }
 
+    /**
+     * Get tasks due today for notifications
+     */
+    fun getTasksDueToday(): List<Task> {
+        val today = android.text.format.DateFormat.format("yyyy-MM-dd", java.util.Date()).toString()
+        return getTasksByDate(today)
+    }
+
     companion object {
         const val DATABASE_NAME = "campusbuddy.db"
-        const val DATABASE_VERSION = 3  // bumped version for new events table
+        const val DATABASE_VERSION = 3
 
         // Events Table
         const val TABLE_EVENTS = "events"

@@ -5,7 +5,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.*
+import com.example.campus_buddy.notifications.TaskReminderWorker
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,10 +24,21 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // Load HomeFragment by default
+        // Schedule daily task reminder notifications
+        scheduleDailyTaskReminders()
+
+        // Handle navigation from notification intent
+        val navigateTo = intent.getStringExtra("navigate_to")
+        val fragmentToLoad = when (navigateTo) {
+            "tasks" -> TasksFragment()
+            "calendar" -> CalendarFragment()
+            else -> HomeFragment()
+        }
+
+        // Load appropriate fragment
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, HomeFragment())
+                .replace(R.id.fragment_container, fragmentToLoad)
                 .commit()
         }
 
@@ -44,6 +58,44 @@ class MainActivity : AppCompatActivity() {
                 .commit()
             true
         }
+    }
 
+    /**
+     * Schedule daily task reminders at 8 AM every day
+     */
+    private fun scheduleDailyTaskReminders() {
+        // Calculate initial delay to run at 8 AM
+        val currentTime = System.currentTimeMillis()
+        val calendar = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 8)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+
+            // If 8 AM already passed today, schedule for tomorrow
+            if (timeInMillis < currentTime) {
+                add(java.util.Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+
+        val initialDelay = calendar.timeInMillis - currentTime
+
+        // Create periodic work request
+        val constraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(false)
+            .build()
+
+        val dailyWorkRequest = PeriodicWorkRequestBuilder<TaskReminderWorker>(
+            1, TimeUnit.DAYS
+        )
+            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+            .setConstraints(constraints)
+            .build()
+
+        // Enqueue the work
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "daily_task_reminder",
+            ExistingPeriodicWorkPolicy.KEEP,
+            dailyWorkRequest
+        )
     }
 }
