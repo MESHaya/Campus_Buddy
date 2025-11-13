@@ -5,12 +5,17 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import android.content.Context
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.campus_buddy.databse.DatabaseHelper
 import java.security.MessageDigest
 
 class Register : AppCompatActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
 
     // Database helper
     private lateinit var dbHelper: DatabaseHelper

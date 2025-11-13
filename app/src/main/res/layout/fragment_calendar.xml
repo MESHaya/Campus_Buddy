@@ -27,14 +27,14 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_revert"
-                android:contentDescription="Go back"
+                android:contentDescription="@string/go_back"
                 app:tint="#FFFFFF" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Calendar"
+                android:text="@string/calendar"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_marginStart="8dp"
@@ -56,7 +56,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/logo1"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="12dp" />
@@ -81,6 +81,6 @@
         app:tint="#FFFFFF"
         android:layout_gravity="bottom|end"
         android:layout_margin="72dp"
-        android:contentDescription="Add Event" />
+        android:contentDescription="@string/add_event" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -27,13 +27,13 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_revert"
                 app:tint="#FFFFFF"
-                android:contentDescription="Go back" />
+                android:contentDescription="@string/go_back" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Campus Map"
+                android:text="@string/campus_map"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -58,7 +58,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="12dp"
             android:src="@drawable/logo1"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo"
             android:layout_gravity="center" />
 
         <!-- Short Description -->
@@ -66,7 +66,7 @@
             android:id="@+id/tvDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose between our sister colleges to see their location and plan your visit."
+            android:text="@string/map_description"
             android:textColor="#333333"
             android:textSize="15sp"
             android:gravity="center"
@@ -86,7 +86,7 @@
                 android:id="@+id/radioMSA"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="IIE MSA"
+                android:text="@string/msa_campus"
                 android:textColor="#113F7D"
                 android:textSize="16sp"
                 android:checked="true" />
@@ -95,7 +95,7 @@
                 android:id="@+id/radioVarsity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="IIE Varsity"
+                android:text="@string/varsity_campus"
                 android:textColor="#113F7D"
                 android:textSize="16sp"
                 android:layout_marginStart="24dp" />

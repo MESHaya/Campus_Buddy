@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Kampus Maat</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome">Welkom</string>
+    <string name="to">by</string>
+    <string name="register">Registreer</string>
+    <string name="login">Teken Aan</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Teken Aan</string>
+    <string name="username">Gebruikersnaam</string>
+    <string name="password">Wagwoord</string>
+    <string name="or">of</string>
+    <string name="login_with_google">Teken aan met Google</string>
+
+    <!-- Register Screen -->
+    <string name="sign_up">Registreer</string>
+    <string name="name">Naam</string>
+    <string name="surname">Van</string>
+    <string name="email">E-pos</string>
+    <string name="student_id">Student ID</string>
+    <string name="sign_up_with_google">Registreer met Google</string>
+
+    <!-- Home Screen -->
+    <string name="choose_option">Kies \'n opsie:</string>
+    <string name="calendar">Kalender</string>
+    <string name="tasks">Take</string>
+    <string name="attendance">Bywoning</string>
+    <string name="map">Kaart</string>
+    <string name="emergency">Noodgeval</string>
+    <string name="settings">Instellings</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Tuis</string>
+    <string name="nav_calendar">Kalender</string>
+    <string name="nav_tasks">Take</string>
+    <string name="nav_attendance">Bywoning</string>
+    <string name="nav_map">Kaart</string>
+
+    <!-- Calendar Fragment -->
+    <string name="add_event">Voeg Gebeurtenis By</string>
+    <string name="event_title">Gebeurtenis Titel</string>
+    <string name="event_time">Gebeurtenis Tyd (UU:MM)</string>
+    <string name="event_description">Gebeurtenis Beskrywing</string>
+    <string name="save_event">Stoor Gebeurtenis</string>
+
+    <!-- Tasks Fragment -->
+    <string name="new_tasks">Nuwe Take:</string>
+    <string name="task_title">Taak Titel</string>
+    <string name="task_description">Taak Beskrywing</string>
+    <string name="tap_select_date">Tik om \'n datum te kies</string>
+    <string name="save_task">Stoor Taak</string>
+    <string name="all_tasks">Alle Take</string>
+    <string name="all_your_tasks">Al jou take</string>
+    <string name="status">Status:</string>
+    <string name="due">Verskuldig</string>
+    <string name="done">Klaar</string>
+    <string name="overdue">Agterstallig</string>
+    <string name="due_date_label">Verskuldig:</string>
+
+    <!-- Emergency Fragment -->
+    <string name="emergency_title">Noodgeval:</string>
+    <string name="emergency_description">Skakel hierdie nommers direk as jy \'n noodgeval het:</string>
+    <string name="ambulance">Ambulans</string>
+    <string name="police">Polisie</string>
+    <string name="traffic">Verkeer</string>
+    <string name="campus_protection">Kampus Beskerming</string>
+    <string name="test_caller">Toets Beller</string>
+    <string name="call_ambulance">Bel Ambulans</string>
+    <string name="call_police">Bel Polisie</string>
+    <string name="call_traffic">Bel Verkeer</string>
+    <string name="call_campus">Bel Kampus Sekuriteit</string>
+    <string name="emergency_alert">Noodgeval Waarskuwing</string>
+
+    <!--  Map Fragment -->
+    <string name="campus_map">Kampuskaart</string>
+    <string name="map_description">Kies tussen ons susterkolleges om hul ligging te sien en jou besoek te beplan.</string>
+    <string name="msa_campus">IIE MSA</string>
+    <string name="varsity_campus">IIE Varsity</string>
+
+
+    <!-- Settings Fragment -->
+    <string name="language">Taal</string>
+    <string name="enable_notifications">Aktiveer Kennisgewings</string>
+    <string name="dark_mode">Donker Modus</string>
+
+    <!-- Common -->
+    <string name="go_back">Gaan terug</string>
+    <string name="logo">Logo</string>
+    <string name="app_logo">App Logo</string>
+
+    <!-- Languages Array -->
+    <string-array name="languages">
+        <item>Engels</item>
+        <item>Afrikaans</item>
+        <item>isiZulu</item>
+        <item>SeSotho</item>
+    </string-array>
+</resources>

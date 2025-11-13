@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -95,29 +96,23 @@ class SettingsFragment : Fragment() {
         // ----------------- LANGUAGE SPINNER -----------------
         val languageSpinner: Spinner = view.findViewById(R.id.languageSpinner)
         val savedLang = prefs.getString("Language", "English") ?: "English"
-
-        // Pre-select the saved language
         val langArray = resources.getStringArray(R.array.languages)
         val savedIndex = langArray.indexOf(savedLang)
-        if (savedIndex >= 0) {
-            languageSpinner.setSelection(savedIndex, false) // false = don't trigger listener
-        }
+        if (savedIndex >= 0) languageSpinner.setSelection(savedIndex, false)
 
         languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (isInitializing) {
                     isInitializing = false
-                    return // Skip the first automatic trigger
+                    return
                 }
 
                 val selectedLang = parent.getItemAtPosition(position).toString()
                 val currentLang = prefs.getString("Language", "English")
 
-                // Only update if language actually changed
                 if (selectedLang != currentLang) {
                     prefs.edit().putString("Language", selectedLang).apply()
                     updateLanguage(selectedLang)
-                    Toast.makeText(requireContext(), "Language set to $selectedLang", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -179,20 +174,15 @@ class SettingsFragment : Fragment() {
 
     // ----------------- UPDATE LANGUAGE -----------------
     private fun updateLanguage(language: String) {
-        val locale = when (language) {
-            "English" -> Locale.ENGLISH
-            "Afrikaans" -> Locale("af")
-            "Zulu" -> Locale("zu")
-            "Sotho" -> Locale("st")
-            else -> Locale.ENGLISH
-        }
-        Locale.setDefault(locale)
-        val config = resources.configuration
-        config.setLocale(locale)
-        requireActivity().baseContext.resources.updateConfiguration(
-            config,
-            requireActivity().baseContext.resources.displayMetrics
-        )
-        requireActivity().recreate()
+        // Set the locale in LocaleHelper
+        LocaleHelper.setLocale(requireContext(), language)
+
+        // Restart the entire activity to apply language changes immediately
+        val intent = requireActivity().intent
+        requireActivity().finish()
+        startActivity(intent)
+
+        // Optional: Add a fade animation for smoother transition
+        requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 }

@@ -21,7 +21,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/logo1"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo"
             android:layout_gravity="center"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="12dp" />
@@ -30,7 +30,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Event Title"
+            android:hint="@string/event_title"
             app:startIconTint="#113F7D">
 
 
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Event Time (HH:MM)"
+            android:hint="@string/event_time"
             app:startIconTint="#113F7D">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Event Description"
+            android:hint="@string/event_description"
             app:startIconTint="#113F7D">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -77,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Save Event"
+            android:text="@string/save_event"
             style="@style/Widget.MaterialComponents.Button"
             android:backgroundTint="#113F7D"
             android:textColor="@android:color/white"
