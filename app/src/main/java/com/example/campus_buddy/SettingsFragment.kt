@@ -108,11 +108,11 @@ class SettingsFragment : Fragment() {
                 }
 
                 val selectedLang = parent.getItemAtPosition(position).toString()
+                val normalizedLang = LocaleHelper.getNormalizedLanguage(selectedLang)
                 val currentLang = prefs.getString("Language", "English")
 
-                if (selectedLang != currentLang) {
-                    prefs.edit().putString("Language", selectedLang).apply()
-                    updateLanguage(selectedLang)
+                if (normalizedLang != currentLang) {
+                    updateLanguage(normalizedLang)
                 }
             }
 
@@ -174,15 +174,19 @@ class SettingsFragment : Fragment() {
 
     // ----------------- UPDATE LANGUAGE -----------------
     private fun updateLanguage(language: String) {
-        // Set the locale in LocaleHelper
+        // Save the language preference
+        prefs.edit().putString("Language", language).apply()
+
+        // Apply locale immediately
         LocaleHelper.setLocale(requireContext(), language)
 
-        // Restart the entire activity to apply language changes immediately
+        // Restart the activity with clear flags to force complete reload
         val intent = requireActivity().intent
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         requireActivity().finish()
         startActivity(intent)
 
-        // Optional: Add a fade animation for smoother transition
+        // Smooth transition animation
         requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 }

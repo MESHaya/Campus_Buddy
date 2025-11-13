@@ -24,12 +24,12 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_revert"
             app:tint="#FFFFFF"
-            android:contentDescription="Go back" />
+            android:contentDescription="@string/go_back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Campus Map"
+            android:text="@string/campus_map"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -82,7 +82,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Campus Map"
+            android:text="@string/campus_map"
             android:textColor="#113F7D"
             android:textSize="18sp"
             android:textStyle="bold"
