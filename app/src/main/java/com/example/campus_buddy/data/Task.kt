@@ -1,4 +1,3 @@
-
 package com.example.campusbuddy.data
 
 data class Task(
@@ -7,9 +6,8 @@ data class Task(
     val title: String,
     val description: String? = null,
     val category: String? = null,
-    val priority: String = 1.toString(),  // default priority
+    val priority: String = 1.toString(),
     val dueAt: String? = null,
-    var status: String = "Due", // default status
-    val createdAt: String = System.currentTimeMillis().toString() // default timestamp
+    var status: String = "todo", // Changed from "Due" to "todo"
+    val createdAt: String = System.currentTimeMillis().toString()
 )
-

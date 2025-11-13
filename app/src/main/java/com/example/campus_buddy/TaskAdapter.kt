@@ -25,7 +25,7 @@ class TaskAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_task, parent, false) // 👈 Here we connect item_task.xml
+            .inflate(R.layout.item_task, parent, false)
         return TaskViewHolder(view)
     }
 
@@ -36,19 +36,23 @@ class TaskAdapter(
         holder.tvTitle.text = task.title
         holder.tvDescription.text = task.description
 
-        // Set correct status
-        when (task.status) {
-            "Due" -> holder.radioDue.isChecked = true
-            "Done" -> holder.radioDone.isChecked = true
-            "Overdue" -> holder.radioOverdue.isChecked = true
+        // Remove listener temporarily to prevent triggering during setup
+        holder.radioGroup.setOnCheckedChangeListener(null)
+
+        // Set correct radio button based on database status
+        when (task.status.lowercase()) {
+            "todo" -> holder.radioDue.isChecked = true
+            "done" -> holder.radioDone.isChecked = true
+            "inprogress" -> holder.radioOverdue.isChecked = true
+            else -> holder.radioDue.isChecked = true // default
         }
 
-        // Handle user changing status
+        // Handle user changing status - use DATABASE values
         holder.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             task.status = when (checkedId) {
-                R.id.radioDue -> "Due"
-                R.id.radioDone -> "Done"
-                R.id.radioOverdue -> "Overdue"
+                R.id.radioDue -> "todo"
+                R.id.radioDone -> "done"
+                R.id.radioOverdue -> "inprogress"
                 else -> task.status
             }
             onStatusChanged(task)

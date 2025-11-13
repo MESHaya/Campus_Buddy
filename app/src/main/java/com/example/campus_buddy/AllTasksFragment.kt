@@ -74,13 +74,12 @@ class AllTasksFragment : Fragment() {
 
     private fun filterTasks(status: String) {
         val filteredTasks = when (status) {
-            "Due" -> allTasks.filter { it.status == "todo" }
-            "Done" -> allTasks.filter { it.status == "done" }
-            "Overdue" -> allTasks.filter { it.status == "inprogress" }
+            "Due" -> allTasks.filter { it.status.equals("todo", ignoreCase = true) }
+            "Done" -> allTasks.filter { it.status.equals("done", ignoreCase = true) }
+            "Overdue" -> allTasks.filter { it.status.equals("inprogress", ignoreCase = true) }
             else -> allTasks
         }
 
-        // Update displayedTasks safely
         displayedTasks.clear()
         displayedTasks.addAll(filteredTasks)
         taskAdapter.notifyDataSetChanged()
