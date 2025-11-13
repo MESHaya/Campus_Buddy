@@ -77,8 +77,11 @@ dependencies {
     // Logging
     implementation("com.jakewharton.timber:timber:5.0.1")
 
-    // Maps
+    // Google Maps
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+    // Google Play Services Location (for user location)
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     // ------------------------API SECTION --------------------------
 

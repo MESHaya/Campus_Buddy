@@ -1,126 +1,137 @@
 package com.example.campus_buddy
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageButton
-import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+
 
 class MapFragment : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var googleMap: GoogleMap
-    private lateinit var radioGroupCampus: RadioGroup
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var btnBack: ImageButton
 
-    // Test location - Johannesburg City Center (very obvious location)
-    private val testLocation = LatLng(-26.2041, 28.0473)
-    private val msaLocation = LatLng(-26.0833, 27.8765)
-    private val varsityLocation = LatLng(-26.09017666692695, 28.052551253580052)
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_map)
 
-        Log.d("MapFragment", "onCreate called")
-        Toast.makeText(this, "Loading map...", Toast.LENGTH_SHORT).show()
+        // Initialize location client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Initialize views
-        radioGroupCampus = findViewById(R.id.radioGroupCampus)
         btnBack = findViewById(R.id.btnBack)
 
         // Set up the map fragment
         val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as? SupportMapFragment
-
-        if (mapFragment == null) {
-            Log.e("MapFragment", "Map fragment is NULL!")
-            Toast.makeText(this, "Error: Map fragment not found", Toast.LENGTH_LONG).show()
-        } else {
-            Log.d("MapFragment", "Map fragment found, calling getMapAsync")
-            mapFragment.getMapAsync(this)
-        }
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
 
         // Back button functionality
         btnBack.setOnClickListener {
             finish()
         }
-
-        // Radio button listener
-        radioGroupCampus.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.radioMSA -> {
-                    if (::googleMap.isInitialized) {
-                        Log.d("MapFragment", "Showing MSA location")
-                        showLocation(msaLocation, "IIE MSA")
-                    } else {
-                        Log.e("MapFragment", "Map not initialized yet")
-                    }
-                }
-                R.id.radioVarsity -> {
-                    if (::googleMap.isInitialized) {
-                        Log.d("MapFragment", "Showing Varsity location")
-                        showLocation(varsityLocation, "IIE Varsity College")
-                    } else {
-                        Log.e("MapFragment", "Map not initialized yet")
-                    }
-                }
-            }
-        }
     }
 
     override fun onMapReady(map: GoogleMap) {
-        Log.d("MapFragment", "onMapReady called - MAP IS READY!")
-        Toast.makeText(this, "Map loaded successfully!", Toast.LENGTH_SHORT).show()
-
         googleMap = map
 
         // Configure map settings
         googleMap.uiSettings.apply {
             isZoomControlsEnabled = true
+            isMyLocationButtonEnabled = true
             isCompassEnabled = true
-            isMyLocationButtonEnabled = false
         }
 
-        // Set map type to normal
-        googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-
-        // Show test location first
-        Log.d("MapFragment", "Showing test location: Johannesburg")
-        showLocation(testLocation, "Test Location - Johannesburg")
+        // Check and request location permission
+        checkLocationPermission()
     }
 
-    private fun showLocation(location: LatLng, title: String) {
+    private fun checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission already granted
+            enableMyLocation()
+        } else {
+            // Request permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private fun enableMyLocation() {
         try {
-            Log.d("MapFragment", "showLocation called for: $title at $location")
+            // Enable the blue dot showing user location
+            googleMap.isMyLocationEnabled = true
 
-            // Clear existing markers
-            googleMap.clear()
+            // Get user's current location and move camera
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    val userLocation = LatLng(location.latitude, location.longitude)
+                    googleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(userLocation, 15f)
+                    )
+                    Toast.makeText(this, "Showing your location", Toast.LENGTH_SHORT).show()
+                } else {
+                    // If location is null, show default location (Johannesburg)
+                    val defaultLocation = LatLng(-26.2041, 28.0473)
+                    googleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f)
+                    )
+                    Toast.makeText(this, "Unable to get current location", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: SecurityException) {
+            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-            // Add marker for the campus
-            googleMap.addMarker(
-                MarkerOptions()
-                    .position(location)
-                    .title(title)
-            )
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-            // Move camera to the location with animation
-            googleMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(location, 15f),
-                1000,
-                null
-            )
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                enableMyLocation()
+            } else {
+                // Permission denied - show default location
+                Toast.makeText(
+                    this,
+                    "Location permission denied. Showing default location.",
+                    Toast.LENGTH_LONG
+                ).show()
 
-            Log.d("MapFragment", "Camera moved successfully")
-        } catch (e: Exception) {
-            Log.e("MapFragment", "Error in showLocation: ${e.message}")
-            Toast.makeText(this, "Error showing location: ${e.message}", Toast.LENGTH_LONG).show()
+                val defaultLocation = LatLng(-26.2041, 28.0473)
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f)
+                )
+            }
         }
     }
 }
