@@ -1,7 +1,33 @@
 # CampusBuddy - Personal Campus Guide
 
 **Campus_Buddy** is an Android application developed in Kotlin using Android Studio and SQLite Database. The app helps users to stay organized, protected, and when navigating.
+---
+### 🚩Important Note: Create your own API Key for Maps ###
+Steps:
+1. Navigate to: https://console.cloud.google.com/
+2. Sign in with your Google Account
+3. At the top, click the project dropdown → New Project.
+4. Name your project: “Campus Buddy”
+5. Click create
+6. In the left sidebar, go to APIs & Services → Library.
+7. Enable Maps SDK for Android and Maps Static API
+8. Go to APIs & Services → Credentials.
+9. Click + Create Credentials → API Key.
+10. A pop-up will appear showing your new API key — copy it somewhere safe.
+11. Lastly paste your API Key in res/values/strings
 
+---
+## ✨ Innovative features for Part 3
+
+- 📍 **Maps** Allows users to receive directions, displays campus map with Google Maps API showing IIE sister schools with directions. Users can choose between IIE MSA and IIE Varsity.
+- ⛶  **Attendance** Users can scan the provided QR code with their camera to mark their attendance.
+
+## 🚀 Features for Part 3
+
+- 🔐 **SSO Login** The user is able to log in to the app using their Google account for quick access. 
+- ✈︎ **Offline Mode** Users can perform offline actions with synchronisation capabilities once they reconnect. These features are the calendar, notes and emergency. 
+- 🔔 **Real-time Notification** Implemented push notification system for real-time updates and alerts such as notifying tasks added and events that show to the user.
+- 🗣️ **Multi-Language**  2 South African Languages are supported that users can choose from. We included the option to support English, Afrikaans, isiZulu, Sesotho.
 ---
 
 ## ✨ Innovative features for Part 2
