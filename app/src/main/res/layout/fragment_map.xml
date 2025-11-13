@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#E8F0FF">
+    android:background="#E8F0FF"
+    android:padding="16dp">
 
-    <!-- App Bar -->
+    <!-- App bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="#113F7D"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:elevation="4dp">
@@ -21,89 +22,93 @@
             android:id="@+id/btnBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_revert"
-            app:tint="#FFFFFF"
-            android:contentDescription="@string/go_back" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            app:tint="#FFFFFF" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/campus_map"
+            android:text="Campus Map"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginStart="8dp" />
     </LinearLayout>
 
-    <!-- Content -->
-    <LinearLayout
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="12dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/logo1"
+        android:contentDescription="@string/logo" />
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/tvDescription"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:text="Choose a sister college to see its location and get directions."
+        android:textColor="#333333"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Radio group (acts like dropdown choices) -->
+    <RadioGroup
+        android:id="@+id/radioGroupCampus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:checkedButton="@id/radioMSA">
+
+        <RadioButton
+            android:id="@+id/radioMSA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IIE MSA" />
+
+        <RadioButton
+            android:id="@+id/radioVarsity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IIE Varsity"
+            android:layout_marginStart="16dp" />
+
+    </RadioGroup>
+
+    <!-- Static map card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
 
         <ImageView
-            android:id="@+id/logo"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="12dp"
-            android:contentDescription="@string/logo"
-            android:src="@drawable/logo1" />
-
-        <!-- Title for user location -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your Current Location"
-            android:textColor="#113F7D"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Small Google Map showing user location -->
-        <androidx.cardview.widget.CardView
+            android:id="@+id/staticMapImage"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="Static map image"
+            android:adjustViewBounds="true" />
+    </androidx.cardview.widget.CardView>
 
-            <fragment
-                android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </androidx.cardview.widget.CardView>
-
-        <!-- Title for campus map -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/campus_map"
-            android:textColor="#113F7D"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Campus Map Image -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <ImageView
-                android:id="@+id/imgCampusMap"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/logo1"
-                android:contentDescription="Campus Map Image" />
-        </androidx.cardview.widget.CardView>
-
-    </LinearLayout>
+    <!-- Small note -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tap map to open Google Maps directions"
+        android:textSize="12sp"
+        android:textColor="#666"
+        android:gravity="center"
+        android:layout_marginTop="6dp"/>
 </LinearLayout>
