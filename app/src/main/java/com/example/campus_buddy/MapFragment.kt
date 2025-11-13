@@ -1,137 +1,103 @@
 package com.example.campus_buddy
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.ImageButton
-import android.widget.Toast
+import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
+import android.widget.Toast
+import com.bumptech.glide.Glide
+import java.net.URLEncoder
+import java.util.Locale
 
+class MapFragment : AppCompatActivity() {
 
-class MapFragment : AppCompatActivity(), OnMapReadyCallback {
-
-    private lateinit var googleMap: GoogleMap
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var staticMapImage: ImageView
+    private lateinit var radioGroup: RadioGroup
     private lateinit var btnBack: ImageButton
 
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1
+    // Put your API key securely (see notes). For demo, we read from strings.xml
+    private val apiKey: String by lazy { getString(R.string.google_maps_key) }
+
+    // Campus coordinates map: id -> Pair(lat, lng)
+    private val campusCoordinates = mapOf(
+        R.id.radioMSA to Pair(-26.0833, 27.8765),                // IIE MSA (Ruimsig, Gauteng)
+        R.id.radioVarsity to Pair(-26.11441731442983, 28.057343816972416), // Varsity College Sandton
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_map)
 
-        // Initialize location client
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        // Initialize views
+        staticMapImage = findViewById(R.id.staticMapImage)
+        radioGroup = findViewById(R.id.radioGroupCampus)
         btnBack = findViewById(R.id.btnBack)
 
-        // Set up the map fragment
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // Load default (the checked radio)
+        val initialId = radioGroup.checkedRadioButtonId.takeIf { it != -1 } ?: R.id.radioMSA
+        val coords = campusCoordinates[initialId] ?: campusCoordinates.values.first()
+        loadCampusMap(coords!!.first, coords.second)
 
-        // Back button functionality
-        btnBack.setOnClickListener {
-            finish()
-        }
-    }
-
-    override fun onMapReady(map: GoogleMap) {
-        googleMap = map
-
-        // Configure map settings
-        googleMap.uiSettings.apply {
-            isZoomControlsEnabled = true
-            isMyLocationButtonEnabled = true
-            isCompassEnabled = true
-        }
-
-        // Check and request location permission
-        checkLocationPermission()
-    }
-
-    private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission already granted
-            enableMyLocation()
-        } else {
-            // Request permission
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
-    }
-
-    private fun enableMyLocation() {
-        try {
-            // Enable the blue dot showing user location
-            googleMap.isMyLocationEnabled = true
-
-            // Get user's current location and move camera
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    val userLocation = LatLng(location.latitude, location.longitude)
-                    googleMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(userLocation, 15f)
-                    )
-                    Toast.makeText(this, "Showing your location", Toast.LENGTH_SHORT).show()
-                } else {
-                    // If location is null, show default location (Johannesburg)
-                    val defaultLocation = LatLng(-26.2041, 28.0473)
-                    googleMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f)
-                    )
-                    Toast.makeText(this, "Unable to get current location", Toast.LENGTH_SHORT).show()
-                }
-            }
-        } catch (e: SecurityException) {
-            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                enableMyLocation()
+        // Change when radio selection changes
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val p = campusCoordinates[checkedId]
+            if (p != null) {
+                loadCampusMap(p.first, p.second)
             } else {
-                // Permission denied - show default location
-                Toast.makeText(
-                    this,
-                    "Location permission denied. Showing default location.",
-                    Toast.LENGTH_LONG
-                ).show()
-
-                val defaultLocation = LatLng(-26.2041, 28.0473)
-                googleMap.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f)
-                )
+                Toast.makeText(this, "Coordinates not found", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        // Tap -> open Google Maps directions to current selection
+        staticMapImage.setOnClickListener {
+            val checkedId = radioGroup.checkedRadioButtonId.takeIf { it != -1 } ?: R.id.radioMSA
+            val p = campusCoordinates[checkedId]
+            if (p != null) openGoogleMapsDirections(p.first, p.second) else
+                Toast.makeText(this, "Location not available", Toast.LENGTH_SHORT).show()
+        }
+
+        btnBack.setOnClickListener { finish() }
+    }
+
+    private fun loadCampusMap(lat: Double, lng: Double) {
+        // Build Static Maps URL
+        // size=640x400 is max in free tier for some apps; you may adjust
+        val size = "800x600" // adjust if you want different resolution
+        val zoom = 15
+        // marker label and color
+        val marker = "color:blue|label:C|$lat,$lng"
+
+        // URL encode marker string
+        val markerEncoded = URLEncoder.encode(marker, "utf-8")
+        // Center param
+        val center = "$lat,$lng"
+
+        val mapUrl = String.format(
+            Locale.US,
+            "https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=%d&size=%s&markers=%s&key=%s",
+            center, zoom, size, markerEncoded, apiKey
+        )
+
+        // Load with Glide
+        Glide.with(this)
+            .load(mapUrl)
+            .into(staticMapImage)
+    }
+
+    private fun openGoogleMapsDirections(lat: Double, lng: Double) {
+        // Open Google Maps with directions to lat,lng
+        val uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d")
+        val mapIntent = Intent(Intent.ACTION_VIEW, uri)
+        mapIntent.setPackage("com.google.android.apps.maps")
+
+        // If Google Maps app not available, open in browser
+        if (mapIntent.resolveActivity(packageManager) != null) {
+            startActivity(mapIntent)
+        } else {
+            val browserUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lng")
+            startActivity(Intent(Intent.ACTION_VIEW, browserUri))
         }
     }
 }
