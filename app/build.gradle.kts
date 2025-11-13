@@ -83,6 +83,9 @@ dependencies {
     // Google Play Services Location (for user location)
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
     // ------------------------API SECTION --------------------------
 
         implementation("androidx.core:core-ktx:1.12.0")
