@@ -314,4 +314,32 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         const val COLUMN_TIME = "time"
         const val COLUMN_DESCRIPTION = "description"
     }
+    fun insertAttendance(
+        userId: String,
+        moduleId: String,
+        method: String, // "QR" or "GPS"
+        valid: Boolean
+    ): Long {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(AttendanceTable.COL_ID, System.currentTimeMillis().toString())
+            put(AttendanceTable.COL_USER_ID, userId)
+            put(AttendanceTable.COL_MODULE_ID, moduleId)
+            put(AttendanceTable.COL_SESSION_AT, System.currentTimeMillis())
+            put(AttendanceTable.COL_METHOD, method)
+            put(AttendanceTable.COL_VALID, if (valid) 1 else 0)
+        }
+
+        val result = db.insert(AttendanceTable.TABLE_NAME, null, values)
+        db.close()
+
+        if (result == -1L) {
+            Log.e("DB_ERROR", "Failed to insert attendance")
+        } else {
+            Log.d("DB_DEBUG", "Attendance recorded successfully for user=$userId")
+        }
+
+        return result
+    }
+
 }
