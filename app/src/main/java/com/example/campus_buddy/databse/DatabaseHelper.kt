@@ -8,6 +8,8 @@ import android.util.Log
 import com.example.campus_buddy.Event
 import com.example.campus_buddy.notifications.CampusNotificationManager
 import com.example.campusbuddy.data.Task
+import com.example.campus_buddy.data.User
+
 
 class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -80,7 +82,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         email: String,
         studentID: String,
         password: String
-    ) {
+    ): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
             put(UserTable.COL_NAME, name.trim())
@@ -99,7 +101,10 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         } else {
             Log.d("DB_DEBUG", "User inserted with rowid=$result")
         }
+
+        return result
     }
+
 
     // ----------------- TASK METHODS WITH NOTIFICATIONS -----------------
     fun insertTask(title: String, description: String, dueAt: String, status: String = "todo"): Long {
@@ -233,6 +238,44 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         return tasks
     }
 
+    fun insertAttendance(attendance: com.example.campus_buddy.data.Attendance): Boolean {
+        val db = this.writableDatabase
+
+        // Check if attendance for this user + module + date already exists (avoid duplicates)
+        val cursor = db.query(
+            AttendanceTable.TABLE_NAME,
+            arrayOf(AttendanceTable.COL_ID),
+            "${AttendanceTable.COL_USER_ID} = ? AND ${AttendanceTable.COL_MODULE_ID} = ? AND ${AttendanceTable.COL_SESSION_AT} = ?",
+            arrayOf(attendance.userId, attendance.moduleId, attendance.sessionAt),
+            null, null, null
+        )
+
+        val alreadyExists = cursor.moveToFirst()
+        cursor.close()
+
+        if (alreadyExists) {
+            db.close()
+            Log.d("DB_ATTENDANCE", "Attendance already marked for ${attendance.userId}")
+            return false
+        }
+
+        val values = ContentValues().apply {
+            put(AttendanceTable.COL_ID, attendance.id)
+            put(AttendanceTable.COL_USER_ID, attendance.userId)
+            put(AttendanceTable.COL_MODULE_ID, attendance.moduleId)
+            put(AttendanceTable.COL_SESSION_AT, attendance.sessionAt)
+            put(AttendanceTable.COL_METHOD, attendance.method)
+            put(AttendanceTable.COL_VALID, if (attendance.valid) 1 else 0)
+        }
+
+        val result = db.insert(AttendanceTable.TABLE_NAME, null, values)
+        db.close()
+
+        val success = result != -1L
+        Log.d("DB_ATTENDANCE", if (success) "Attendance inserted" else "Failed to insert attendance")
+        return success
+    }
+
     // ----------------- EVENT METHODS WITH NOTIFICATIONS -----------------
     fun insertEvent(title: String, date: String, time: String?, description: String?): Long {
         val db = writableDatabase
@@ -314,32 +357,174 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, D
         const val COLUMN_TIME = "time"
         const val COLUMN_DESCRIPTION = "description"
     }
-    fun insertAttendance(
-        userId: String,
-        moduleId: String,
-        method: String, // "QR" or "GPS"
-        valid: Boolean
-    ): Long {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(AttendanceTable.COL_ID, System.currentTimeMillis().toString())
-            put(AttendanceTable.COL_USER_ID, userId)
-            put(AttendanceTable.COL_MODULE_ID, moduleId)
-            put(AttendanceTable.COL_SESSION_AT, System.currentTimeMillis())
-            put(AttendanceTable.COL_METHOD, method)
-            put(AttendanceTable.COL_VALID, if (valid) 1 else 0)
-        }
 
-        val result = db.insert(AttendanceTable.TABLE_NAME, null, values)
+    /**
+     * Check if an email already exists in the database
+     */
+    fun emailExists(email: String): Boolean {
+        val db = this.readableDatabase
+        val query = "SELECT 1 FROM ${UserTable.TABLE_NAME} WHERE ${UserTable.COL_EMAIL} = ? LIMIT 1"
+        val cursor = db.rawQuery(query, arrayOf(email))
+        val exists = cursor.count > 0
+        cursor.close()
         db.close()
-
-        if (result == -1L) {
-            Log.e("DB_ERROR", "Failed to insert attendance")
-        } else {
-            Log.d("DB_DEBUG", "Attendance recorded successfully for user=$userId")
-        }
-
-        return result
+        return exists
     }
 
+    /**
+     * Check if a username already exists in the database
+     */
+    fun usernameExists(username: String): Boolean {
+        val db = this.readableDatabase
+        val query = "SELECT 1 FROM ${UserTable.TABLE_NAME} WHERE ${UserTable.COL_USERNAME} = ? LIMIT 1"
+        val cursor = db.rawQuery(query, arrayOf(username))
+        val exists = cursor.count > 0
+        cursor.close()
+        db.close()
+        return exists
+    }
+
+
+    /**
+     * Insert user from Google Sign-In
+     * Automatically generates username and password for SSO users
+     */
+    fun insertGoogleUser(
+        googleId: String,
+        email: String,
+        displayName: String?,
+        givenName: String?,
+        familyName: String?
+    ): Long {
+        // Check if user already exists
+        if (emailExists(email)) {
+            Log.d("DB_DEBUG", "Google user already exists: $email")
+            return getUserIdByEmail(email)
+        }
+
+        val db = writableDatabase
+
+        // Extract first and last name
+        val firstName = givenName ?: displayName?.split(" ")?.firstOrNull() ?: "User"
+        val lastName = familyName ?: displayName?.split(" ")?.lastOrNull() ?: ""
+
+        // Generate unique username from email
+        val username = email.substringBefore("@")
+
+        // For Google users, we don't need a password (use Google ID as placeholder)
+        val placeholderPassword = hashPassword("GOOGLE_SSO_$googleId")
+
+        val values = ContentValues().apply {
+            put(UserTable.COL_ID, System.currentTimeMillis().toString())
+            put(UserTable.COL_NAME, firstName)
+            put(UserTable.COL_SURNAME, lastName)
+            put(UserTable.COL_USERNAME, username)
+            put(UserTable.COL_EMAIL, email)
+            put(UserTable.COL_STUDENT_NUM, "SSO-$googleId")  // Use Google ID as student number
+            put(UserTable.COL_PASSWORD, placeholderPassword)  // Not used for SSO
+        }
+
+        return try {
+            val result = db.insert(UserTable.TABLE_NAME, null, values)
+
+            if (result == -1L) {
+                Log.e("DB_ERROR", "Failed to insert Google user")
+            } else {
+                Log.d("DB_DEBUG", "Google user inserted with rowid=$result")
+            }
+
+            result
+        } catch (e: Exception) {
+            Log.e("DB_ERROR", "Error inserting Google user: ${e.message}", e)
+            -1L
+        } finally {
+            db.close()
+        }
+    }
+
+    /**
+     * Get user ID by email (for existing SSO users)
+     */
+    fun getUserIdByEmail(email: String): Long {
+        val db = readableDatabase
+        val cursor = db.query(
+            UserTable.TABLE_NAME,
+            arrayOf(UserTable.COL_ID),
+            "${UserTable.COL_EMAIL} = ?",
+            arrayOf(email),
+            null, null, null
+        )
+
+        var userId = -1L
+        if (cursor.moveToFirst()) {
+            userId = cursor.getString(0).toLongOrNull() ?: -1L
+        }
+
+        cursor.close()
+        db.close()
+        return userId
+    }
+
+    /**
+     * Check if user signed in with Google (has SSO student number)
+     */
+    fun isGoogleUser(email: String): Boolean {
+        val db = readableDatabase
+        val cursor = db.query(
+            UserTable.TABLE_NAME,
+            arrayOf(UserTable.COL_STUDENT_NUM),
+            "${UserTable.COL_EMAIL} = ?",
+            arrayOf(email),
+            null, null, null
+        )
+
+        var isSSO = false
+        if (cursor.moveToFirst()) {
+            val studentNum = cursor.getString(0)
+            isSSO = studentNum.startsWith("SSO-")
+        }
+
+        cursor.close()
+        db.close()
+        return isSSO
+    }
+
+    /**
+     * Get user data by email
+     */
+    fun getUserByEmail(email: String): User? {
+        val db = readableDatabase
+        val cursor = db.query(
+            UserTable.TABLE_NAME,
+            null,
+            "${UserTable.COL_EMAIL} = ?",
+            arrayOf(email),
+            null, null, null
+        )
+
+        var user: com.example.campus_buddy.data.User? = null
+        if (cursor.moveToFirst()) {
+            user = com.example.campus_buddy.data.User(
+                id = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_ID)),
+                name = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_NAME)),
+                surname = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_SURNAME)),
+                username = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_USERNAME)),
+                email = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_EMAIL)),
+                studentNum = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_STUDENT_NUM)),
+                password = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COL_PASSWORD))
+            )
+        }
+
+        cursor.close()
+        db.close()
+        return user
+    }
+
+    // Helper method for hashing (if not already present)
+    private fun hashPassword(password: String): String {
+        val bytes = password.toByteArray()
+        val md = java.security.MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.joinToString("") { "%02x".format(it) }
+    }
 }

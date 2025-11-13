@@ -16,11 +16,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 class AttendanceFragment : Fragment() {
 
     private lateinit var txtResult: TextView
-    private lateinit var dbHelper: DatabaseHelper // your DB helper/DAO
+    private lateinit var dbHelper: DatabaseHelper
 
     private val barcodeLauncher = registerForActivityResult(ScanContract()) { result ->
         if (result.contents != null) {
@@ -31,15 +30,15 @@ class AttendanceFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_attendance, container, false)
         val btnScanQR = view.findViewById<Button>(R.id.btnScanQR)
         txtResult = view.findViewById(R.id.tvResult)
 
-
-        dbHelper = DatabaseHelper(requireContext()) // initialize your DB connection
+        dbHelper = DatabaseHelper(requireContext())
 
         btnScanQR.setOnClickListener {
             startQRScanner()
@@ -61,46 +60,37 @@ class AttendanceFragment : Fragment() {
 
         // Example format: CLASS101|2025-11-12|SESSION2
         val parts = data.split("|")
-        val classId = parts.getOrNull(0)
+        val moduleId = parts.getOrNull(0)
         val date = parts.getOrNull(1)
         val session = parts.getOrNull(2)
 
-        if (classId != null && date != null) {
-            if (session != null) {
-                markAttendance(
-                    "STU123", date, session,
-                    session = TODO()
-                )
-            }
+        if (moduleId != null && date != null && session != null) {
+            markAttendance("STU123", moduleId, "QR", session)
         } else {
             Toast.makeText(requireContext(), "Invalid QR format", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun markAttendance(userId: String, moduleId: String, method: String, session: String?) {
-        // Make sure 'date' is defined somewhere, e.g., current date as string
-        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    private fun markAttendance(userId: String, moduleId: String, method: String, session: String) {
+        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val sessionAt = "$currentDate $session"
 
         val attendance = Attendance(
             id = System.currentTimeMillis().toString(),
             userId = userId,
             moduleId = moduleId,
-            sessionAt = date + " " + (session ?: ""),
-            method = method, // use the method passed to the function
+            sessionAt = sessionAt,
+            method = method,
             valid = true
         )
 
-        val success = dbHelper.insertAttendance(
-            attendance.toString(),
-            moduleId = TODO(),
-            method = TODO(),
-            valid = TODO()
-        )
-        if (true) {
+        // Pass the entire Attendance object to insertAttendance
+        val success = dbHelper.insertAttendance(attendance)
+
+        if (success) {
             Toast.makeText(requireContext(), "Attendance marked!", Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(requireContext(), "Already marked or DB error", Toast.LENGTH_SHORT).show()
         }
     }
-
 }
