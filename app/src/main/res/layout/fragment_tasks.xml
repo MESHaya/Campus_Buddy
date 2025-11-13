@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="12dp"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo"
             android:src="@drawable/logo1" />
 
         <!-- Top bar -->
@@ -35,7 +35,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Go back"
+                android:contentDescription="@string/go_back"
                 android:src="@android:drawable/ic_menu_revert" />
 
             <TextView
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="New Tasks:"
+                android:text="@string/new_tasks"
                 android:textColor="#113F7D"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@android:drawable/edit_text"
-            android:hint="Task Title"
+            android:hint="@string/task_title"
             android:padding="12dp" />
 
         <EditText
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:drawable/edit_text"
-            android:hint="Task Description"
+            android:hint="@string/task_description"
             android:padding="12dp" />
 
         <!-- Date picker -->
@@ -87,7 +87,7 @@
             android:background="@android:drawable/edit_text"
             android:clickable="true"
             android:focusable="true"
-            android:hint="Tap to select a date"
+            android:hint="@string/tap_select_date"
             android:padding="12dp"
             android:textColor="#555"
             android:textSize="14sp"

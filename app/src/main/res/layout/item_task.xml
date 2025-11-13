@@ -19,7 +19,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Task Title"
+            android:text="@string/task_title"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#113F7D"/>
@@ -29,7 +29,7 @@
             android:id="@+id/tvDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Task Description"
+            android:text="@string/task_description"
             android:textSize="14sp"
             android:textColor="#555"
             android:layout_marginTop="4dp"/>
@@ -50,7 +50,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Status:"
+            android:text="@string/status"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="#113F7D"
@@ -69,7 +69,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Due"
+                android:text="@string/due"
                 android:textColor="#FFA500"/>
 
             <RadioButton
@@ -77,7 +77,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Done"
+                android:text="@string/done"
                 android:textColor="#4CAF50"/>
 
             <RadioButton
@@ -85,7 +85,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Overdue"
+                android:text="@string/overdue"
                 android:textColor="#F44336"/>
         </RadioGroup>
     </LinearLayout>

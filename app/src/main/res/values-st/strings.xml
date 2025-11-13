@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Motsoalle oa Khamphaseng</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome">Rea o amohela</string>
+    <string name="to">ho</string>
+    <string name="register">Ngodisa</string>
+    <string name="login">Kena</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Kena</string>
+    <string name="username">Lebitso la Mosebedisi</string>
+    <string name="password">Phasewete</string>
+    <string name="or">kapa</string>
+    <string name="login_with_google">Kena ka Google</string>
+
+    <!-- Register Screen -->
+    <string name="sign_up">Ngodisa</string>
+    <string name="name">Lebitso</string>
+    <string name="surname">Fane</string>
+    <string name="email">Emeile</string>
+    <string name="student_id">Nomoro ya Moithuti</string>
+    <string name="sign_up_with_google">Ngodisa ka Google</string>
+
+    <!-- Home Screen -->
+    <string name="choose_option">Kgetha kgetho:</string>
+    <string name="calendar">Khalendara</string>
+    <string name="tasks">Mesebetsi</string>
+    <string name="attendance">Boteng</string>
+    <string name="map">Mmapa</string>
+    <string name="emergency">Tshohanyetso</string>
+    <string name="settings">Ditlhophiso</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Hae</string>
+    <string name="nav_calendar">Khalendara</string>
+    <string name="nav_tasks">Mesebetsi</string>
+    <string name="nav_attendance">Boteng</string>
+    <string name="nav_map">Mmapa</string>
+
+    <!-- Calendar Fragment -->
+    <string name="add_event">Eketsa Ketsahalo</string>
+    <string name="event_title">Sehlooho sa Ketsahalo</string>
+    <string name="event_time">Nako ya Ketsahalo (HH:MM)</string>
+    <string name="event_description">Tlhaloso ya Ketsahalo</string>
+    <string name="save_event">Boloka Ketsahalo</string>
+
+    <!-- Tasks Fragment -->
+    <string name="new_tasks">Mesebetsi e Metjha:</string>
+    <string name="task_title">Sehlooho sa Mosebetsi</string>
+    <string name="task_description">Tlhaloso ya Mosebetsi</string>
+    <string name="tap_select_date">Tobetsa ho kgetha letsatsi</string>
+    <string name="save_task">Boloka Mosebetsi</string>
+    <string name="all_tasks">Mesebetsi Yohle</string>
+    <string name="all_your_tasks">Mesebetsi yohle ya hao</string>
+    <string name="status">Boemo:</string>
+    <string name="due">E lokelwa</string>
+    <string name="done">E phethilwe</string>
+    <string name="overdue">E feta nako</string>
+    <string name="due_date_label">E lokelwa:</string>
+
+    <!-- Emergency Fragment -->
+    <string name="emergency_title">Tshohanyetso:</string>
+    <string name="emergency_description">Letsetsa dinomoro tsena hang ha o na le tshohanyetso:</string>
+    <string name="ambulance">Ambulense</string>
+    <string name="police">Maphodisa</string>
+    <string name="traffic">Sephethephethe</string>
+    <string name="campus_protection">Tshireletso ya Khampase</string>
+    <string name="test_caller">Moletsi wa Teko</string>
+    <string name="call_ambulance">Letsetsa Ambulense</string>
+    <string name="call_police">Letsetsa Maphodisa</string>
+    <string name="call_traffic">Letsetsa Sephethephethe</string>
+    <string name="call_campus">Letsetsa Tshireletso ya Khampase</string>
+    <string name="emergency_alert">Temoso ya Tshohanyetso</string>
+
+    <!--  Map Fragment -->
+    <string name="campus_map">Mapa wa Kampase</string>
+    <string name="map_description">Kgetha pakeng tsa dikholetjhe tse kgaufatsaneng ho bona moo di leng teng le ho rera ketelo ya hao.</string>
+    <string name="msa_campus">IIE MSA</string>
+    <string name="varsity_campus">IIE Varsity</string>
+
+
+    <!-- Settings Fragment -->
+    <string name="language">Puo</string>
+    <string name="enable_notifications">Dumella Ditsebiso</string>
+    <string name="dark_mode">Mokgwa o Lefifi</string>
+
+    <!-- Common -->
+    <string name="go_back">Boela morao</string>
+    <string name="logo">Logo</string>
+    <string name="app_logo">Logo ya App</string>
+
+    <!-- Languages Array -->
+    <string-array name="languages">
+        <item>Senyesemane</item>
+        <item>Afrikaans</item>
+        <item>isiZulu</item>
+        <item>SeSotho</item>
+    </string-array>
+</resources>

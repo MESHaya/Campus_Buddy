@@ -18,7 +18,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:src="@drawable/logo1"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp" />
 
@@ -36,14 +36,14 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_revert"
-                android:contentDescription="Go back"
+                android:contentDescription="@string/go_back"
                 app:tint="#113F7D" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Settings"
+                android:text="@string/settings"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="#113F7D"
@@ -76,7 +76,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Language"
+                    android:text="@string/language"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="#113F7D" />
@@ -111,7 +111,7 @@
                 android:id="@+id/notificationsSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enable Notifications"
+                android:text="@string/enable_notifications"
                 android:textSize="16sp"
                 android:textColor="#113F7D"
                 app:trackTint="@color/primaryLight"
@@ -139,7 +139,7 @@
                 android:id="@+id/darkModeSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dark Mode"
+                android:text="@string/dark_mode"
                 android:textSize="16sp"
                 android:textColor="#113F7D"
                 app:trackTint="@color/primaryLight"

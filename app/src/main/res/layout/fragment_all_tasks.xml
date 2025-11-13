@@ -16,14 +16,14 @@
         android:layout_gravity="center"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="12dp"
-        android:contentDescription="Logo" />
+        android:contentDescription="@string/logo" />
 
     <!-- Title -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="All your tasks"
+        android:text="@string/all_your_tasks"
         android:textColor="#113F7D"
         android:textSize="22sp"
         android:textStyle="bold"
